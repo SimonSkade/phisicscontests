@@ -20,9 +20,6 @@
 
 
 
-
-
-
 /******************************************************************
   Template Name: Manup
   Description: Manup Event HTML Template
@@ -420,8 +417,8 @@ ol {
 }
 
 .hero-section .hero-text {
-	padding-top: 120px;/*184px;*/
-	padding-bottom: 140px;
+	padding-top: 130px;/*184px;*/
+	padding-bottom: 210px;
 }
 
 .hero-section .hero-text span {
@@ -2241,16 +2238,15 @@ ol {
 }
 
 /*-------------------------------- Respinsive Media Styles --------------------------------*/
-/*
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1300px) {
 	.container {
-		max-width: 1170px;
+		max-width: 1270px;
 	}
-}*/
+}
 
 /* Medium Device: 1200px */
 
-@media only screen and (min-width: 992px) and (max-width: 1199px) {
+@media only screen and (min-width: 992px) and (max-width: 1299px) {
 	.nav-menu .mainmenu ul li {
 		margin-right: 25px;
 	}

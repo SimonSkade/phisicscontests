@@ -35,15 +35,15 @@
     <header class="header-section">
         <div class="container">
             <div class="logo">
-                <a href="/">
+                <a href="{{ url_for('home') }}">
                     <img src="{{ url_for('static', filename='new_img/logo1.png') }}" alt="">
                 </a>
             </div>
             <div class="nav-menu">
                 <nav class="mainmenu mobile-menu">
                     <ul>
-                        <li class="active"><a href="/">Home</a></li>
-                        <li><a href="/about">About</a></li>
+                        <li class="active"><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
                         <li><a href="#">Upcoming Contests</a>
                             <ul class="dropdown">
                                 <li><a href="#">Contest#1</a></li>
@@ -54,6 +54,8 @@
                         </li>
                         <li><a href="#">Past Contests</a></li>
                         <li><a href="#">Contribute</a></li>
+                        <li><a href="{{ url_for('login') }}">Log In</a></li>
+                        <li><a href="{{ url_for('register') }}">Register</a></li>
                     </ul>
                 </nav>
             </div>
@@ -61,7 +63,15 @@
         </div>
     </header>
     <!-- Header End -->
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ catecory }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     {% block body %}{% endblock %}
 
     <!-- Footer Section Begin -->
