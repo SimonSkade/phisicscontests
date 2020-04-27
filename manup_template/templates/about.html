@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <!-- Home About Section Begin -->
+    <section class="about-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ha-pic">
+                        <img src="{{ url_for('static', filename='new_img/einstein-645461_1920.jpg') }}" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="ha-text">
+                        <h2>Why contests?</h2>
+                        <p>
+                            Learning through contests is a very effective and funny way of learning.
+                            I experienced that in the field of computer science, where you can find a ton of coding competitions.
+                            This site does actually the same for physics.
+                            The problems you will encounter here do not focus on querying your knowledge, but rather challenge your problem solving skills.
+                        </p>
+                        <ul>
+                            <li><span class="icon_check"></span> Improve your problem solving skills</li>
+                            <li><span class="icon_check"></span> Improve your physics skills</li>
+                            <li><span class="icon_check"></span> Have fun competing with others</li>
+                            <li><span class="icon_check"></span> Win competitions and increase your rating!</li>
+                        </ul>
+                        <a href="#" class="ha-btn">Let's start</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 info">
+                    <div class="section-title">
+                        <h2>Further information</h2>
+                        <p>View the project on <a href="#">github</a>! Feel free to contribute and send a push request.</p>
+                        <p>Contact: <a href="mailto:sorry_not_yet_setup">insert email address later!</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Home About Section End -->
+{% endblock %}

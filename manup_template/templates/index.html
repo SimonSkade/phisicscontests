@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <!-- Hero Section Begin -->
+    <section class="hero-section set-bg" data-setbg="{{ url_for('static', filename='new_img/sky-space-dark-galaxy-2150.jpg') }}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="hero-text">
+                        <h2>Improve your physics skills through contests!</h2>
+                        <a href="#" class="primary-btn">Register and Compete</a>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <img src="" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- Counter Section Begin -->
+    <section class="counter-section bg-gradient">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="counter-text">
+                        <span>Due next contest</span>
+                        <h3>Contest#1</br>Beginner</h3>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="cd-timer" id="countdown">
+                        <div class="cd-item">
+                            <span>40</span>
+                            <p>Days</p>
+                        </div>
+                        <div class="cd-item">
+                            <span>18</span>
+                            <p>Hours</p>
+                        </div>
+                        <div class="cd-item">
+                            <span>46</span>
+                            <p>Minutes</p>
+                        </div>
+                        <div class="cd-item">
+                            <span>32</span>
+                            <p>Seconds</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Counter Section End -->
+
+    <!-- Home About Section Begin -->
+    <section class="home-about-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ha-pic">
+                        <img src="{{ url_for('static', filename='new_img/einstein-645461_1920.jpg') }}" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="ha-text">
+                        <h2>Why contests?</h2>
+                        <p>
+                            Learning through contests is a very effective and funny way of learning.
+                            I experienced that in the field of computer science, where you can find a ton of coding competitions.
+                            This site does actually the same for physics.
+                            The problems you will encounter here do not focus on querying your knowledge, but rather challenge your problem solving skills.
+                        </p>
+                        <ul>
+                            <li><span class="icon_check"></span> Improve your problem solving skills</li>
+                            <li><span class="icon_check"></span> Improve your physics skills</li>
+                            <li><span class="icon_check"></span> Have fun competing with others</li>
+                            <li><span class="icon_check"></span> Win competitions and increase your rating!</li>
+                        </ul>
+                        <a href="#" class="ha-btn">Let's start</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Home About Section End -->
+{% endblock %}
