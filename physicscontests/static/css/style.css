@@ -4,7 +4,10 @@
 	padding-top: 50px;
 }
 
-
+.auth-form {
+	margin-left: auto;
+	margin-right: auto;
+}
 
 
 
@@ -521,7 +524,7 @@ ol {
 }
 
 .ha-text {
-	padding-top: 74px;
+	padding-top: 110px;
 }
 
 .ha-text h2 {

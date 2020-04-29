@@ -1,6 +1,6 @@
 import secrets
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 from flask import render_template, url_for, flash, redirect, request
 from physicscontests import app, db, bcrypt
 from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm
@@ -59,7 +59,7 @@ def save_picture(form_picture):
 	
 	output_size = (150,150)
 	i = Image.open(form_picture)
-	i.thumbnail(output_size)
+	i = ImageOps.fit(i,output_size, Image.ANTIALIAS)
 	i.save(picture_path)
 	return picture_fn
 

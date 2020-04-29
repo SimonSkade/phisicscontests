@@ -32,7 +32,7 @@
     </div>
 
     <!-- Header Section Begin -->
-    <header class="header-section">
+    <header class="header-section bg-gradient">
         <div class="container">
             <div class="logo">
                 <a href="{{ url_for('home') }}">
@@ -68,15 +68,18 @@
         </div>
     </header>
     <!-- Header End -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ catecory }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ catecory }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     {% block body %}{% endblock %}
 
     <!-- Footer Section Begin -->
