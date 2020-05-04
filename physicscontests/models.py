@@ -15,3 +15,19 @@ class User(UserMixin, db.Model):
 	def __repr__(self):
 		return f"User('{self.username}', '{self.email}', '{self.image_file}'"
 
+
+class Task(db.Model):
+	visible = db.Column(db.Boolean,nullable=False,default=True)
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(200), nullable=False)
+	story = db.Column(db.Text, nullable=False)
+	task = db.Column(db.Text, nullable=False)
+	solution = db.Column(db.String(300), nullable=False)
+	writeup = db.Column(db.Text, default="See the attached document for an explanation.")
+	writeup2 = db.Column(db.String(400))
+	author = db.Column(db.String(100), nullable=False)
+
+	def __repr__(self):
+		return f"Task('{self.title}', ID: '{self.id}')"
+
+

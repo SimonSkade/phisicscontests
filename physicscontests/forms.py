@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from physicscontests.models import User
 
@@ -46,4 +46,13 @@ class UpdateAccountForm(FlaskForm):
 			if user:
 				raise ValidationError("email already registered")
 
+
+class TaskForm(FlaskForm):
+	title = StringField("Title", validators=[DataRequired()])
+	story = TextAreaField("Story or Background", validators=[DataRequired()])
+	task = TextAreaField("Task", validators=[DataRequired()])
+	solution = StringField("Solution", validators=[DataRequired()])
+	writeup = TextAreaField("Writeup / Explanation of solution")
+	writeup2 = FileField("Writeup / Explanation of solution", validators=[FileAllowed(["jpg","png","pdf","docx","odt","odp","pptx","txt","md"])])
+	submit = SubmitField("Create Task")
 
