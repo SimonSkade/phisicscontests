@@ -2,7 +2,7 @@
 {% block body %}
 <div class="container mt-4">
 	<div class="row">
-    	<div class="media mb-2 auth-form text-center">
+    	<div class="media mb-2 center-form text-center">
         	<img class="rounded-circle account-img text-center" src="{{ image_file }}">
         	<div class="media-body align-self-center ml-3">
         		<h2 class="account-heading">{{ current_user.username }}</h2>
@@ -10,7 +10,7 @@
         	</div>
     	</div>
     </div>
-	<div class="col-lg-6 auth-form">
+	<div class="col-lg-6 center-form">
 		<form method="POST" action="" enctype="multipart/form-data">
 			{{ form.hidden_tag() }}
 			<fieldset class="form-group">

@@ -52,7 +52,12 @@
                                 <li><a href="#">Contest#4</a></li>
                             </ul>
                         </li>
-                        <li><a href="#">Past Contests</a></li>
+                        <li><a href="#">Practice</a>
+                            <ul class="dropdown">
+                                <li><a href="#">Past Contests</a></li>
+                                <li><a href="{{ url_for('exercises') }}">Exercises</a></li>
+                            </ul>
+                        </li>
                         {% if current_user.is_authenticated %}
                             <li><a href="#">Contribute</a>
                                 <ul class="dropdown">

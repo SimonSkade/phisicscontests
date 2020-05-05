@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+	<div class="col-lg-6 auth-form">
+		<form method="POST" action="">
+			{{ form.hidden_tag() }}
+			<fieldset class="form-group">
+				<legend class="border-bottom mb-4">Create Tasktitle</legend>
+				<div class="mb-3">
+					{{ form.title.label(class="form-control-label") }}
+					{% if form.title.errors %}
+						{{ form.title(class="form-control form-control-lg is-invalid") }}
+						<div class="emailinvalid-feedback">
+							{% for error in form.title.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.title(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<div class="mb-3">
+					{{ form.story.label(class="form-control-label") }}
+					{% if form.story.errors %}
+						{{ form.story(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.story.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.story(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<div class="mb-3">
+					{{ form.task.label(class="form-control-label") }}
+					{% if form.task.errors %}
+						{{ form.task(class="form-control form-control-lg is-invalid") }}
+						<div class="emailinvalid-feedback">
+							{% for error in form.task.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.task(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<div class="mb-3">
+					{{ form.solution.label(class="form-control-label") }}
+					{% if form.solution.errors %}
+						{{ form.solution(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.solution.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.solution(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<div class="mb-3">
+					{{ form.writeup.label(class="form-control-label") }}
+					{% if form.writeup.errors %}
+						{{ form.writeup(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.writeup.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.writeup(class="form-control form-control-lg") }}
+					{% endif %}
+				</div>
+				<p>If you rather want to upload a writeup file, you can do that as well:</p>
+				<div class="mb-3">
+					{{ form.writeup2.label() }}
+					{{ form.writeup2(class="form-control-file") }}
+					{% if form.writeup2.errors %}
+						{% for error in form.writeup2.errors %}
+							<span class="text-danger">{{ error }}</span>
+						{% endfor %}
+					{% endif %}
+				</div>
+			</fieldset>
+			<div class="form-group">
+				{{ form.submit(class="btn btn-outline-info") }}
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
