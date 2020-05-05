@@ -56,3 +56,8 @@ class TaskForm(FlaskForm):
 	writeup2 = FileField("Writeup / Explanation of solution", validators=[FileAllowed(["jpg","png","pdf","docx","odt","odp","pptx","txt","md"])])
 	submit = SubmitField("Create Task")
 
+
+class AnswerForm(FlaskForm):
+	answer = StringField("Your answer", validators=[DataRequired()])
+	submit = SubmitField("Submit Answer")
+
