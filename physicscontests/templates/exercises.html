@@ -2,17 +2,19 @@
 
 {% block body %}
 <div class="container mt-5 mb-5">
-	<table>
-		<tr>
-			<th>Id</th>
-			<th>Name</th>
-		</tr>
-		{% for task in tasks %}
+	<div class="col-lg-10 center-form">
+		<table class="table">
 			<tr>
-				<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.id }}</a></td>
-				<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.title }}</a></td>
+				<th scope="col">Id</th>
+				<th scope="col">Name</th>
 			</tr>
-		{% endfor %}
-	</table>
+			{% for task in tasks %}
+				<tr>
+					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.id }}</a></td>
+					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.title }}</a></td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
 </div>
 {% endblock %}

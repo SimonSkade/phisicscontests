@@ -78,17 +78,15 @@
         </div>
     </header>
     <!-- Header End -->
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ catecory }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <script type="text/javascript">
+                    alert('{{ message }}');
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     {% block body %}{% endblock %}
 

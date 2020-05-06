@@ -17,14 +17,22 @@
 						<span>{{ error }}</span>
 					{% endfor %}
 				</div>
+			{% elif form.answer.data == task.solution %}
+				{{ form.answer(class="form-control form-control-lg") }}
+				<div>
+					<span style="color:green">Correct</span>
+				</div>
 			{% else %}
 				{{ form.answer(class="form-control form-control-lg") }}
+				<div>
+					<span style="color:red">Wrong answer. Try again.</span>
+				</div>
 			{% endif %}
 			</div>
 			<div class="form-group mb-3">
 				{{ form.submit(class="btn btn-outline-info") }}
 			</div>
-			<div class="border-top pt-2 pb-4">
+			<div class="border-top mt-3 pt-2 pb-4">
 				<p class="text-muted text-center">
 					Problem created by {{ task.author }}
 				</p>

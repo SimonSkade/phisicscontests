@@ -1,7 +1,7 @@
 import secrets
 import os
 from PIL import Image, ImageOps
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, make_response
 from physicscontests import app, db, bcrypt
 from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm
 from physicscontests.models import User, Task
@@ -92,7 +92,7 @@ def create_task():
 		task = Task(title=form.title.data, story=form.story.data, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data,author=current_user.username)
 		db.session.add(task)
 		db.session.commit()
-		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it in a practice examples.", "success")
+		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it as a practice example.", "success")
 		return redirect(url_for("home"))
 	return render_template("create_task.html", form=form)
 
@@ -103,19 +103,18 @@ def view_task(taskID):
 	if task:
 		form = AnswerForm()
 		if form.validate_on_submit():
-			print("Printing works")
-			if form.answer.data == task.solution:
-				flash("Correct", "success")
-			else:
-				flash("Wrong Answer, try again", "danger")
+			return render_template("view_task.html", task=task, form=form)
 			return redirect(url_for('exercises') + "/" + str(taskID))
 		return render_template("view_task.html", task=task, form=form)
 	else:
-		return render_template("404.html")
+		return not_found(1)
 
 @app.route("/practice/exercises")
 def exercises():
 	tasks = Task.query.filter_by(visible=True).all()
 	return render_template("exercises.html", tasks=tasks)
 
+@app.errorhandler(404)
+def not_found(trash):#somehow only works with an unneeded argument
+	return make_response(render_template("404.html"),404)
 
