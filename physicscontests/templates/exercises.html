@@ -7,11 +7,13 @@
 			<tr>
 				<th scope="col">Id</th>
 				<th scope="col">Name</th>
+				<th scope="col">Difficulty</th>
 			</tr>
 			{% for task in tasks %}
 				<tr>
 					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.id }}</a></td>
 					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.title }}</a></td>
+					<td>{{ task.difficulty }}</td>
 				</tr>
 			{% endfor %}
 		</table>

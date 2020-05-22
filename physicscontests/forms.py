@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from physicscontests.models import User, Task
 
@@ -54,6 +54,7 @@ class TaskForm(FlaskForm):
 	solution = StringField("Solution", validators=[DataRequired()])
 	writeup = TextAreaField("Writeup / Explanation of solution")
 	writeup2 = FileField("Writeup / Explanation of solution", validators=[FileAllowed(["jpg","png","pdf","docx","odt","odp","pptx","txt","md"])])
+	difficulty = SelectField("Difficulty", choices=[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9),(10,10)], coerce=int)
 	submit = SubmitField("Create Task")
 
 

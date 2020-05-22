@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="container mt-5 mb-5">
-	<div class="col-lg-6 auth-form">
+	<div class="col-lg-6 center-form">
 		<form method="POST" action="">
 			{{ form.hidden_tag() }}
 			<fieldset class="form-group">
@@ -72,12 +72,22 @@
 						{{ form.writeup(class="form-control form-control-lg") }}
 					{% endif %}
 				</div>
-				<p>If you rather want to upload a writeup file, you can do that as well:</p>
+				<p class="mt-4">If you rather want to upload a writeup file, you can do that as well:</p>
 				<div class="mb-3">
 					{{ form.writeup2.label() }}
 					{{ form.writeup2(class="form-control-file") }}
 					{% if form.writeup2.errors %}
 						{% for error in form.writeup2.errors %}
+							<span class="text-danger">{{ error }}</span>
+						{% endfor %}
+					{% endif %}
+				</div>
+				<p class="mt-4">Please specify the difficulty of your problem (from 1: super easy, to 10: insanely severe). Make sure to orientate your decision on the other exercises:</p>
+				<div class="mb-3">
+					{{ form.difficulty.label() }}
+					{{ form.difficulty(class="form-control-file") }}
+					{% if form.difficulty.errors %}
+						{% for error in form.difficulty.errors %}
 							<span class="text-danger">{{ error }}</span>
 						{% endfor %}
 					{% endif %}

@@ -25,6 +25,7 @@ class Task(db.Model):
 	solution = db.Column(db.String(300), nullable=False)
 	writeup = db.Column(db.Text, default="See the attached document for an explanation.")
 	writeup2 = db.Column(db.String(400))
+	difficulty = db.Column(db.Integer, nullable=False)
 	author = db.Column(db.String(100), nullable=False)
 
 	def __repr__(self):

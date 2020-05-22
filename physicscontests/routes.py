@@ -88,8 +88,8 @@ def account():
 @login_required
 def create_task():
 	form = TaskForm()
-	if form.validate_on_submit():
-		task = Task(title=form.title.data, story=form.story.data, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data,author=current_user.username)
+	if form.difficulty.data and form.validate_on_submit():
+		task = Task(title=form.title.data, story=form.story.data, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data, difficulty=form.difficulty.data, author=current_user.username)
 		db.session.add(task)
 		db.session.commit()
 		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it as a practice example.", "success")
