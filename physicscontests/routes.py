@@ -102,9 +102,14 @@ def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
 	if task:
 		form = AnswerForm()
+		if task in current_user.solved:
+			form.answer.data = task.solution
 		if form.validate_on_submit():
+			if form.answer.data == task.solution and current_user.is_authenticated:
+				task.solved_by_users.append(current_user)
+				db.session.commit()
 			return render_template("view_task.html", task=task, form=form)
-			return redirect(url_for('exercises') + "/" + str(taskID))
+			#return redirect(url_for('exercises') + "/" + str(taskID))
 		return render_template("view_task.html", task=task, form=form)
 	else:
 		return not_found(1)
@@ -113,6 +118,24 @@ def view_task(taskID):
 def exercises():
 	tasks = Task.query.filter_by(visible=True).all()
 	return render_template("exercises.html", tasks=tasks)
+
+@app.route("/practice")
+def practice():
+	return render_template("practice.html")
+
+@app.route("/past_contests")
+def past_contests():
+	return render_template("past_contests.html", contests=[])
+
+@app.route("/upcoming_contests")
+def upcoming_contests():
+	return render_template("upcoming_contests.html", contests=[])
+
+
+@app.route("/contribute")
+def contribute():
+	return render_template("contribute.html")
+
 
 @app.errorhandler(404)
 def not_found(trash):#somehow only works with an unneeded argument
