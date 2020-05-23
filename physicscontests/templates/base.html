@@ -100,8 +100,8 @@
                             <a href="#" class="footer-logo"><img src="{{ url_for('static', filename='new_img/logo1.png') }}" alt=""></a>
                         </div>
                         <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="./about-us.html">About</a></li>
+                            <li><a href="{{ url_for('home') }}">Home</a></li>
+                            <li><a href="{{ url_for('about') }}">About</a></li>
                             <li><a href="#">Upcoming Contests</a></li>
                             <li><a href="#">Past Contests</a></li>
                             <li><a href="#">Contribute</a></li>
