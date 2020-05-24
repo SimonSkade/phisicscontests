@@ -3,8 +3,8 @@ import os
 from PIL import Image, ImageOps
 from flask import render_template, url_for, flash, redirect, request, make_response
 from physicscontests import app, db, bcrypt
-from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm
-from physicscontests.models import User, Task
+from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm
+from physicscontests.models import User, Task, Contest
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route("/")
@@ -89,7 +89,7 @@ def account():
 def create_task():
 	form = TaskForm()
 	if form.difficulty.data and form.validate_on_submit():
-		task = Task(title=form.title.data, story=form.story.data, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data, difficulty=form.difficulty.data, author=current_user.username)
+		task = Task(title=form.title.data, story=form.story.data, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data, difficulty=form.difficulty.data, author=current_user)
 		db.session.add(task)
 		db.session.commit()
 		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it as a practice example.", "success")
@@ -135,6 +135,22 @@ def upcoming_contests():
 @app.route("/contribute")
 def contribute():
 	return render_template("contribute.html")
+
+
+@app.route("/create_contest", methods=["GET", "POST"])
+@login_required
+def create_contest():
+	form = ContestForm()
+	if form.validate_on_submit():
+		contest = Contest(name=form.name.data, description=form.description.data, start=form.start.data, end=form.end.data)
+		db.session.add(contest)
+		db.session.commit()
+		flash("Contest created! You can now add exercises to your contest.")
+		#should redirect to modify contest page
+	return render_template("create_contest.html", form=form)
+
+
+
 
 
 @app.errorhandler(404)

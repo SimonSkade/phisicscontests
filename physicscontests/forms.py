@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from physicscontests.models import User, Task
 
@@ -61,4 +61,16 @@ class TaskForm(FlaskForm):
 class AnswerForm(FlaskForm):
 	answer = StringField("Your answer", validators=[DataRequired()])
 	submit = SubmitField("Submit Answer")
+
+
+
+class ContestForm(FlaskForm):
+	name = StringField("Contest name", validators=[DataRequired()])
+	description = TextAreaField("Contest description")
+	start = DateTimeField("Start", validators=[DataRequired()])
+	end = DateTimeField("End", validators=[DataRequired()])
+	submit = SubmitField("Create Contest")
+
+
+
 

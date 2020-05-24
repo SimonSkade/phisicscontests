@@ -55,12 +55,13 @@
                             <li><a href="{{ url_for('contribute') }}">Contribute</a>
                                 <ul class="dropdown">
                                     <li><a href="{{ url_for('create_task') }}">Create Task</a></li>
+                                    <li><a href="{{ url_for('create_contest') }}">Create Contest</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{ url_for('account') }}">Account</a></li>
                             <li><a href="{{ url_for('logout') }}">Log out</a></li>
                         {% else %}
-                            <li><a href="#">Contribute</a></li>
+                            <li><a href="{{ url_for('contribute') }}">Contribute</a></li>
                             <li><a href="{{ url_for('login') }}">Log In</a></li>
                             <li><a href="{{ url_for('register') }}">Register</a></li>
                         {% endif %}

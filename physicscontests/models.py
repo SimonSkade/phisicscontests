@@ -1,5 +1,6 @@
 from physicscontests import db, login_manager
 from flask_login import UserMixin
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -16,7 +17,7 @@ class User(UserMixin, db.Model):
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	image_file = db.Column(db.String(100), nullable=False, default="default.jpg")
 	password = db.Column(db.String(60), nullable=False)
-	#created = db.relationship('Task', backref='author')
+	created = db.relationship('Task', backref='author')
 	solved = db.relationship("Task", secondary=solved_by, backref=db.backref("solved_by_users", lazy="dynamic"))
 
 	def __repr__(self):
@@ -33,9 +34,23 @@ class Task(db.Model):
 	writeup = db.Column(db.Text, default="See the attached document for an explanation.")
 	writeup2 = db.Column(db.String(400))
 	difficulty = db.Column(db.Integer, nullable=False)
-	author = db.Column(db.Integer, nullable=False)
+	#author = db.Column(db.Integer, nullable=False)
+	author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))
 
 	def __repr__(self):
 		return f"Task('{self.title}', ID: '{self.id}')"
+
+
+class Contest(db.Model):
+	id = db.Column(db.Integer,primary_key=True)
+	name = db.Column(db.String(40), unique=True, nullable=False, default=f"Physicscontest #{id}")
+	description = db.Column(db.Text)
+	start = db.Column(db.DateTime, nullable=False)
+	end = db.Column(db.DateTime, nullable=False)
+	tasks = db.relationship('Task', backref='contest')
+
+
+
 
 
