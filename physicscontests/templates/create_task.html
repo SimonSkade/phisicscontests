@@ -34,6 +34,19 @@
 					{% endif %}
 				</div>
 				<div class="mb-3">
+					{{ form.image.label() }}
+					{% if form.image.errors %}
+						{{ form.image(class="form-control form-control-lg is-invalid") }}
+						<div class="invalid-feedback">
+							{% for error in form.image.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.image(class="form-control-file") }}
+					{% endif %}
+				</div>
+				<div class="mb-3">
 					{{ form.task.label(class="form-control-label") }}
 					{% if form.task.errors %}
 						{{ form.task(class="form-control form-control-lg is-invalid") }}

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from physicscontests.models import User, Task
 
@@ -50,6 +50,7 @@ class UpdateAccountForm(FlaskForm):
 class TaskForm(FlaskForm):
 	title = StringField("Title", validators=[DataRequired()])
 	story = TextAreaField("Story or Background", validators=[DataRequired()])
+	image = FileField("Upload Clarification Image", validators=[FileAllowed(["jpg","png"])])
 	task = TextAreaField("Task", validators=[DataRequired()])
 	solution = StringField("Solution", validators=[DataRequired()])
 	writeup = TextAreaField("Writeup / Explanation of solution")
@@ -69,6 +70,8 @@ class ContestForm(FlaskForm):
 	description = TextAreaField("Contest description")
 	start = DateTimeField("Start", validators=[DataRequired()])
 	end = DateTimeField("End", validators=[DataRequired()])
+	users_tasks = Task.query.all()#needs to be changed later
+	tasks = SelectMultipleField("Add Tasks", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
 	submit = SubmitField("Create Contest")
 
 

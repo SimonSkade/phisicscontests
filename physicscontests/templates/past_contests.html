@@ -7,12 +7,11 @@
 			<tr>
 				<th scope="col">Id</th>
 				<th scope="col">Name</th>
-				<th scope="col">Difficulty</th>
 			</tr>
 			{% for contest in contests %}
 				<tr>
-					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ contest.id }}</a></td>
-					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ contest.title }}</a></td>
+					<td><a href="/contests/{{ contest.id }}">{{ contest.id }}</a></td>
+					<td><a href="/contests/{{ contest.id }}">{{ contest.name }}</a></td>
 				</tr>
 			{% endfor %}
 		</table>

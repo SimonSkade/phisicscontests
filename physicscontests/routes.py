@@ -6,6 +6,7 @@ from physicscontests import app, db, bcrypt
 from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm
 from physicscontests.models import User, Task, Contest
 from flask_login import login_user, current_user, logout_user, login_required
+from datetime import datetime
 
 @app.route("/")
 @app.route("/home")
@@ -27,7 +28,7 @@ def register():
 		user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 		db.session.add(user)
 		db.session.commit()
-		flash(f"Account created for {form.username.data}! You can Log in now", "success")
+		flash(f"Account created for {form.username.data}!", "success")
 		return redirect(url_for("login"))
 	return render_template("register.html", form=form)
 
@@ -51,7 +52,7 @@ def logout():
 	logout_user()
 	return redirect(url_for("home"))
 
-def save_picture(form_picture):
+def save_profile_picture(form_picture):
 	random_hex = secrets.token_hex(8)
 	_, f_ext = os.path.splitext(form_picture.filename)
 	picture_fn = random_hex + f_ext
@@ -63,6 +64,19 @@ def save_picture(form_picture):
 	i.save(picture_path)
 	return picture_fn
 
+def save_explanation_picture(form_picture):
+	random_hex = secrets.token_hex(8)
+	_, f_ext = os.path.splitext(form_picture.filename)
+	picture_fn = random_hex + f_ext
+	picture_path = os.path.join(app.root_path, "static/explanation_images", picture_fn)
+	
+	i = Image.open(form_picture)
+	orig_width, orig_height = i.size
+	output_size = (min(orig_width,500),min(orig_height,500))
+	i = ImageOps.fit(i,output_size, Image.ANTIALIAS)
+	i.save(picture_path)
+	return picture_fn
+
 
 @app.route("/account", methods=["GET","POST"])
 @login_required
@@ -70,7 +84,7 @@ def account():
 	form = UpdateAccountForm()
 	if form.validate_on_submit():
 		if form.picture.data:
-			picture_file = save_picture(form.picture.data)
+			picture_file = save_profile_picture(form.picture.data)
 			current_user.image_file = picture_file
 		current_user.username = form.username.data
 		current_user.email = form.email.data
@@ -88,8 +102,13 @@ def account():
 @login_required
 def create_task():
 	form = TaskForm()
-	if form.difficulty.data and form.validate_on_submit():
-		task = Task(title=form.title.data, story=form.story.data, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data, difficulty=form.difficulty.data, author=current_user)
+	if form.validate_on_submit():
+		image_file = None
+		print(form.story.data, "\n\n")
+		if form.image.data:
+			print("HELLO\n\n")
+			image_file = save_explanation_picture(form.image.data)
+		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data, difficulty=form.difficulty.data, author=current_user)
 		db.session.add(task)
 		db.session.commit()
 		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it as a practice example.", "success")
@@ -110,9 +129,18 @@ def view_task(taskID):
 				db.session.commit()
 			return render_template("view_task.html", task=task, form=form)
 			#return redirect(url_for('exercises') + "/" + str(taskID))
-		return render_template("view_task.html", task=task, form=form)
+		image_file = None
+		if task.image_file:
+			image_file = url_for("static",filename="explanation_images/" + current_user.image_file)
+		return render_template("view_task.html", task=task, form=form, image_file=image_file)
 	else:
 		return not_found(1)
+
+@app.route("/contests/<int:contestID>")
+def view_contest(contestID):
+	contest = Contest.query.filter_by(id=contestID).first()
+	return render_template("view_contest.html", contest=contest)
+
 
 @app.route("/practice/exercises")
 def exercises():
@@ -125,11 +153,13 @@ def practice():
 
 @app.route("/past_contests")
 def past_contests():
-	return render_template("past_contests.html", contests=[])
+	contests = Contest.query.filter(Contest.end <= datetime.now()).all()
+	return render_template("past_contests.html", contests=contests)
 
 @app.route("/upcoming_contests")
 def upcoming_contests():
-	return render_template("upcoming_contests.html", contests=[])
+	contests = Contest.query.filter(Contest.end > datetime.now()).all()
+	return render_template("upcoming_contests.html", contests=contests)
 
 
 @app.route("/contribute")
@@ -143,6 +173,8 @@ def create_contest():
 	form = ContestForm()
 	if form.validate_on_submit():
 		contest = Contest(name=form.name.data, description=form.description.data, start=form.start.data, end=form.end.data)
+		for taskID in form.tasks.data:
+			contest.tasks.append(Task.query.filter_by(id=taskID).first())
 		db.session.add(contest)
 		db.session.commit()
 		flash("Contest created! You can now add exercises to your contest.")
