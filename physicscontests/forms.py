@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
+from flask_wtf.file import FileAllowed, FileRequired
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField, SelectMultipleField, MultipleFileField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from physicscontests.models import User, Task
 
@@ -48,6 +48,7 @@ class UpdateAccountForm(FlaskForm):
 
 
 class TaskForm(FlaskForm):
+	#enctype="multipart/form-data"
 	title = StringField("Title", validators=[DataRequired()])
 	story = TextAreaField("Story or Background", validators=[DataRequired()])
 	image = FileField("Upload Clarification Image", validators=[FileAllowed(["jpg","png"])])

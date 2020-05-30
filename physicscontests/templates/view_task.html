@@ -8,8 +8,8 @@
 			<h2 class="text-center mb-2">{{ task.title }}</h2>
 			<p class="text-center mb-4">Difficulty: {{ task.difficulty }}</p>
 			<p>{{ task.story }}</p>
-			{% if task.image_file: %}
-				<img class="text-center" src="{{ task.image_file }}">
+			{% if image_file: %}
+				<img class="text-center" src="{{ image_file }}">
 			{% endif %}
 			<p>{{ task.task }}</p>
 			<div class="mb-3">

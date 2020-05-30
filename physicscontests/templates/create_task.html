@@ -3,7 +3,7 @@
 {% block body %}
 <div class="container mt-5 mb-5">
 	<div class="col-lg-6 center-form">
-		<form method="POST" action="">
+		<form method="POST" action="" enctype="multipart/form-data">
 			{{ form.hidden_tag() }}
 			<fieldset class="form-group">
 				<legend class="border-bottom mb-4">Create Task</legend>
@@ -35,15 +35,11 @@
 				</div>
 				<div class="mb-3">
 					{{ form.image.label() }}
+					{{ form.image(class="form-control-file") }}
 					{% if form.image.errors %}
-						{{ form.image(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.image.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.image(class="form-control-file") }}
+						{% for error in form.image.errors %}
+							<span class="text-danger">{{ error }}</span>
+						{% endfor %}
 					{% endif %}
 				</div>
 				<div class="mb-3">

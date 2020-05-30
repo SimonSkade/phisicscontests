@@ -53,6 +53,7 @@ def logout():
 	return redirect(url_for("home"))
 
 def save_profile_picture(form_picture):
+	print(form_picture.filename, "\n", form_picture,"\n", dir(form_picture),"\n")
 	random_hex = secrets.token_hex(8)
 	_, f_ext = os.path.splitext(form_picture.filename)
 	picture_fn = random_hex + f_ext
@@ -65,6 +66,7 @@ def save_profile_picture(form_picture):
 	return picture_fn
 
 def save_explanation_picture(form_picture):
+	print(form_picture.filename)
 	random_hex = secrets.token_hex(8)
 	_, f_ext = os.path.splitext(form_picture.filename)
 	picture_fn = random_hex + f_ext
@@ -72,11 +74,18 @@ def save_explanation_picture(form_picture):
 	
 	i = Image.open(form_picture)
 	orig_width, orig_height = i.size
-	output_size = (min(orig_width,500),min(orig_height,500))
+	output_size = (min(orig_width,350),min(orig_height,300))
 	i = ImageOps.fit(i,output_size, Image.ANTIALIAS)
 	i.save(picture_path)
 	return picture_fn
 
+def save_writeup_file(file):
+	random_hex = secrets.token_hex(8)
+	_, f_ext = os.path.splitext(file.filename)
+	fname = random_hex + f_ext
+	file_path = os.path.join(app.root_path, "static/writeup_files", fname)
+	file.save(file_path)
+	return fname
 
 @app.route("/account", methods=["GET","POST"])
 @login_required
@@ -84,6 +93,7 @@ def account():
 	form = UpdateAccountForm()
 	if form.validate_on_submit():
 		if form.picture.data:
+			print(form.picture, "  pictureform\n")
 			picture_file = save_profile_picture(form.picture.data)
 			current_user.image_file = picture_file
 		current_user.username = form.username.data
@@ -104,11 +114,12 @@ def create_task():
 	form = TaskForm()
 	if form.validate_on_submit():
 		image_file = None
-		print(form.story.data, "\n\n")
 		if form.image.data:
-			print("HELLO\n\n")
 			image_file = save_explanation_picture(form.image.data)
-		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=form.writeup2.data, difficulty=form.difficulty.data, author=current_user)
+		writeup_file = None
+		if form.writeup2.data:
+			writeup_file = save_writeup_file(form.writeup2.data)
+		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=writeup_file, difficulty=form.difficulty.data, author=current_user)
 		db.session.add(task)
 		db.session.commit()
 		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it as a practice example.", "success")
@@ -131,7 +142,7 @@ def view_task(taskID):
 			#return redirect(url_for('exercises') + "/" + str(taskID))
 		image_file = None
 		if task.image_file:
-			image_file = url_for("static",filename="explanation_images/" + current_user.image_file)
+			image_file = url_for("static",filename="explanation_images/" + task.image_file)
 		return render_template("view_task.html", task=task, form=form, image_file=image_file)
 	else:
 		return not_found(1)

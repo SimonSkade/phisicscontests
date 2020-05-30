@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
 class Task(db.Model):
 	visible = db.Column(db.Boolean,nullable=False,default=True)
 	id = db.Column(db.Integer, primary_key=True)
-	title = db.Column(db.String(200), nullable=False)
+	title = db.Column(db.String(200), unique=True, nullable=False)
 	story = db.Column(db.Text, nullable=False)
 	image_file = db.Column(db.String(200))
 	task = db.Column(db.Text, nullable=False)
