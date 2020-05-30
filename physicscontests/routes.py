@@ -130,9 +130,9 @@ def create_task():
 @app.route("/practice/exercises/<int:taskID>", methods=["GET","POST"])
 def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
-	if task:
+	if task and (task.visible or task.author == current_user):
 		form = AnswerForm()
-		if task in current_user.solved:
+		if current_user.is_authenticated and task in current_user.solved:
 			form.answer.data = task.solution
 		if form.validate_on_submit():
 			if form.answer.data == task.solution and current_user.is_authenticated:

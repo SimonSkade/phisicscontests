@@ -31,7 +31,7 @@ class Task(db.Model):
 	story = db.Column(db.Text, nullable=False)
 	image_file = db.Column(db.String(200))
 	task = db.Column(db.Text, nullable=False)
-	solution = db.Column(db.String(300), nullable=False)
+	solution = db.Column(db.Numeric, nullable=False)
 	writeup = db.Column(db.Text, default="See the attached document for an explanation.")
 	writeup2 = db.Column(db.String(400))
 	difficulty = db.Column(db.Integer, nullable=False)
