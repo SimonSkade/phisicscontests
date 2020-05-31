@@ -11,7 +11,8 @@ from datetime import datetime
 @app.route("/")
 @app.route("/home")
 def home():
-	return render_template("index.html")
+	contest = Contest.query.filter(Contest.end > datetime.now()).order_by(Contest.start).first()
+	return render_template("index.html", contest=contest)
  
 
 @app.route("/about")
@@ -169,7 +170,7 @@ def past_contests():
 
 @app.route("/upcoming_contests")
 def upcoming_contests():
-	contests = Contest.query.filter(Contest.end > datetime.now()).all()
+	contests = Contest.query.filter(Contest.end > datetime.now()).order_by(Contest.start).all()
 	return render_template("upcoming_contests.html", contests=contests)
 
 

@@ -23,32 +23,37 @@
     <section class="counter-section bg-gradient">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4">
-                    <div class="counter-text">
-                        <span>Due next contest</span>
-                        <h3>Contest#1</br>Beginner</h3>
-                    </div>
-                </div>
-                <div class="col-lg-8">
-                    <div class="cd-timer" id="countdown">
-                        <div class="cd-item">
-                            <span>40</span>
-                            <p>Days</p>
-                        </div>
-                        <div class="cd-item">
-                            <span>18</span>
-                            <p>Hours</p>
-                        </div>
-                        <div class="cd-item">
-                            <span>46</span>
-                            <p>Minutes</p>
-                        </div>
-                        <div class="cd-item">
-                            <span>32</span>
-                            <p>Seconds</p>
+                {% if contest.name %}
+                    <div class="col-lg-4">
+                        <div class="counter-text">
+                            <span>Until next contest</span>
+                            <h3 class="mb-2">{{ contest.name }}</h3>
+                            <span>starts at </span><span id="contest-start">{{ contest.start }}</span>
                         </div>
                     </div>
-                </div>
+                    <div class="col-lg-8">
+                        <div class="cd-timer" id="countdown">
+                            <div class="cd-item">
+                                <span>40</span>
+                                <p>Days</p>
+                            </div>
+                            <div class="cd-item">
+                                <span>18</span>
+                                <p>Hours</p>
+                            </div>
+                            <div class="cd-item">
+                                <span>46</span>
+                                <p>Minutes</p>
+                            </div>
+                            <div class="cd-item">
+                                <span>32</span>
+                                <p>Seconds</p>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <h3>Sorry, no upcoming contest scheduled</h3>
+                {% endif %}
             </div>
         </div>
     </section>

@@ -7,11 +7,15 @@
 			<tr>
 				<th scope="col">Id</th>
 				<th scope="col">Name</th>
+				<th scope="col">Start</th>
+				<th scope="col">End</th>
 			</tr>
 			{% for contest in contests %}
 				<tr>
 					<td>{{ contest.id }}</td>
 					<td>{{ contest.name }}</td>
+					<td>{{ contest.start }}</td>
+					<td>{{ contest.end }}</td>
 				</tr>
 			{% endfor %}
 		</table>
