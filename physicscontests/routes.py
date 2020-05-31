@@ -2,11 +2,12 @@ import secrets
 import os
 from PIL import Image, ImageOps
 from flask import render_template, url_for, flash, redirect, request, make_response
-from physicscontests import app, db, bcrypt
-from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm
+from physicscontests import app, db, bcrypt, login_manager
 from physicscontests.models import User, Task, Contest
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
+from sqlalchemy import or_
+from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm
 
 @app.route("/")
 @app.route("/home")
@@ -29,9 +30,10 @@ def register():
 		user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 		db.session.add(user)
 		db.session.commit()
-		flash(f"Account created for {form.username.data}!", "success")
+		flash(f"Account created for {form.username.data}! You can log in now.", "success")
 		return redirect(url_for("login"))
 	return render_template("register.html", form=form)
+
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -41,7 +43,7 @@ def login():
 	if form.validate_on_submit():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user and bcrypt.check_password_hash(user.password, form.password.data):
-			login_user(user, remember=form.remember.data)
+			login_user(user)
 			next_page = request.args.get("next")
 			return redirect(next_page) if next_page else redirect(url_for("home"))
 		else:
@@ -123,7 +125,7 @@ def create_task():
 		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=writeup_file, difficulty=form.difficulty.data, author=current_user)
 		db.session.add(task)
 		db.session.commit()
-		flash("Thanks for creating this task! We will check it and probably use it in a contest or upload it as a practice example.", "success")
+		flash("Thanks for creating this task! This task is not visible for other users at the moment, but you can put it into one of your contests.", "success")
 		return redirect(url_for("home"))
 	return render_template("create_task.html", form=form)
 
@@ -156,7 +158,10 @@ def view_contest(contestID):
 
 @app.route("/practice/exercises")
 def exercises():
-	tasks = Task.query.filter_by(visible=True).all()
+	if current_user.is_authenticated:
+		tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
+	else:
+		tasks = Task.query.filter_by(visible=True).all()
 	return render_template("exercises.html", tasks=tasks)
 
 @app.route("/practice")

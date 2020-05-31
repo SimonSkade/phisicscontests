@@ -25,7 +25,7 @@ class User(UserMixin, db.Model):
 
 
 class Task(db.Model):
-	visible = db.Column(db.Boolean,nullable=False,default=True)
+	visible = db.Column(db.Boolean,nullable=False,default=False)
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String(200), unique=True, nullable=False)
 	story = db.Column(db.Text, nullable=False)
