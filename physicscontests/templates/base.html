@@ -82,6 +82,18 @@
         {% endif %}
     {% endwith %}
 
+    {% with running_cs = get_running_contests() %}
+        {% if running_cs %}
+            <header class="header-section bg-gradient">
+                <div class="container">
+                    {% for contest in running_cs %}
+                        <div class="row">Jump to running contest: <a href="/contests/{{ contest.id }}">{{ contest.name }}</a></div>
+                    {% endfor %}                    
+                </div>
+            </header>
+        {% endif %}
+    {% endwith %}
+
     {% block body %}{% endblock %}
 
     <!-- Footer Section Begin -->

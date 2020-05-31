@@ -5,6 +5,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextA
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from physicscontests.models import User, Task
 from sqlalchemy import or_
+from physicscontests import login_manager
 
 class RegistrationForm(FlaskForm):
 	username = StringField("Username", validators=[DataRequired(), Length(min=2,max=20)])
@@ -75,10 +76,12 @@ class ContestForm(FlaskForm):
 	description = TextAreaField("Contest description")
 	start = DateTimeField("Start (format: yyyy-mm-dd HH:MM:SS)", validators=[DataRequired()])
 	end = DateTimeField("End (format: yyyy-mm-dd HH:MM:SS)", validators=[DataRequired()])
-	if current_user:
+	"""if current_user:
 		users_tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
 	else:
 		users_tasks = Task.query.filter_by(visible=True).all()
+	"""
+	users_tasks = Task.query.all()
 	tasks = SelectMultipleField("Add Tasks", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
 	submit = SubmitField("Create Contest")
 	def validate_title(self,name):

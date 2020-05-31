@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	image_file = db.Column(db.String(200), nullable=False, default="default.jpg")
 	password = db.Column(db.String(60), nullable=False)
+	contests_created = db.relationship('Contest', backref='creator')
 	created = db.relationship('Task', backref='author')
 	solved = db.relationship("Task", secondary=solved_by, backref=db.backref("solved_by_users", lazy="dynamic"))
 
@@ -49,6 +50,7 @@ class Contest(db.Model):
 	start = db.Column(db.DateTime, nullable=False)
 	end = db.Column(db.DateTime, nullable=False)
 	tasks = db.relationship('Task', backref='contest')
+	creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 

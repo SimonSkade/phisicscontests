@@ -2,12 +2,14 @@ import secrets
 import os
 from PIL import Image, ImageOps
 from flask import render_template, url_for, flash, redirect, request, make_response
-from physicscontests import app, db, bcrypt, login_manager
+from physicscontests import app, db, bcrypt, login_manager#, scheduler
 from physicscontests.models import User, Task, Contest
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 from sqlalchemy import or_
 from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm
+from wtforms import SelectMultipleField
+from flask_wtf import FlaskForm
 
 @app.route("/")
 @app.route("/home")
@@ -30,7 +32,7 @@ def register():
 		user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 		db.session.add(user)
 		db.session.commit()
-		flash(f"Account created for {form.username.data}! You can log in now.", "success")
+		flash(f"Account created for {form.username.data}!", "success")
 		return redirect(url_for("login"))
 	return render_template("register.html", form=form)
 
@@ -153,7 +155,10 @@ def view_task(taskID):
 @app.route("/contests/<int:contestID>")
 def view_contest(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
-	return render_template("view_contest.html", contest=contest)
+	if contest.start >= datetime.now() or current_user == contest.creator:
+		return render_template("view_contest.html", contest=contest)
+	else:
+		return not_found(1)
 
 
 @app.route("/practice/exercises")
@@ -184,19 +189,28 @@ def contribute():
 	return render_template("contribute.html")
 
 
+
+#def publish_contest(contestID):
+#	return
+
+
 @app.route("/create_contest", methods=["GET", "POST"])
 @login_required
 def create_contest():
 	form = ContestForm()
+	#users_tasks= Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
+	#form2 = FlaskForm()
+	#form2.tasks = SelectMultipleField(label="Add Tasks", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
 	if form.validate_on_submit():
-		contest = Contest(name=form.name.data, description=form.description.data, start=form.start.data, end=form.end.data)
+		contest = Contest(name=form.name.data, description=form.description.data, start=form.start.data, end=form.end.data, creator=current_user)
 		for taskID in form.tasks.data:
 			contest.tasks.append(Task.query.filter_by(id=taskID).first())
 		db.session.add(contest)
 		db.session.commit()
+		#scheduler.add_job(publish_contest, "date", run_date=contest.start, args=[contest.id])
 		flash("Contest created! You can now add exercises to your contest.")
 		#should redirect to modify contest page
-	return render_template("create_contest.html", form=form)
+	return render_template("create_contest.html", form=form)#, contests_running=Contest.query.filter(Contest.start <= datetime.now()).filter(Contest.end > datetime.now()).all())
 
 
 
