@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mb-5">
+	<div class="col-lg-6 center-form">
+		<div class="row">
+                <div class="ha-text">
+                    <h2>Rules</h2>
+                    <ul>
+                        <li><span class="icon_check"></span> Normally, you should only participate on your own, but since this is kind of a demo-test-version, teamwork is ok.</li>
+                        <li><span class="icon_check"></span> Please do not hack the website or the server, I know that it is not secure yet.</li>
+                        <li><span class="icon_check"></span> Do not publish results until the end of the contest.</li>
+                        <li><span class="icon_check"></span> You will need to enter a number as an answer for each task. Your answer will be judged as correct if the relative error is less or equal to one thousandth. (Make sure to write decimal numbers with a dot, not a comma)</li>
+                        <li><span class="icon_check"></span> You are allowed to search the Internet or use any tools if you like, although it may be cooler calculating some exercises by hand.</li>
+                    </ul>
+                    <p>Make sure to reload the page when the contests starts.</p>
+                    <p>Have much fun and good luck!</p>
+                </div>
+            </div>
+		<form method="POST" action="">
+			{{ form.hidden_tag() }}
+			<fieldset class="form-group">
+				<div class="form-check">
+                    {{ form.accept(class="form-check-input") }}
+                    {{ form.accept.label(class="form-check-label") }}
+                </div>
+			</fieldset>
+			<div class="form-group">
+				{{ form.submit(class="btn btn-outline-info") }}
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

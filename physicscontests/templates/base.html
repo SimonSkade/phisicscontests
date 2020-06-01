@@ -87,7 +87,7 @@
             <header class="header-section bg-gradient">
                 <div class="container">
                     {% for contest in running_cs %}
-                        <div class="row">Jump to running contest: <a href="/contests/{{ contest.id }}">{{ contest.name }}</a></div>
+                        <div class="row center-form"><p>Join running contest: <a href="url_for('view_contest', contestID=contest.id)">{{ contest.name }}</a></p></div>
                     {% endfor %}                    
                 </div>
             </header>

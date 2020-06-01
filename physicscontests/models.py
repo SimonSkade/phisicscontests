@@ -8,7 +8,19 @@ def load_user(user_id):
 
 solved_by = db.Table("solved_by",
 	db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
-	db.Column("task_id", db.Integer, db.ForeignKey("task.id"))
+	db.Column("task_id", db.Integer, db.ForeignKey("task.id")),
+	db.Column('timestamp', db.TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
+	)
+
+participation = db.Table("participation",
+	db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+	db.Column("contest_id", db.Integer, db.ForeignKey("contest.id"))
+	)
+
+placement = db.Table("placement",
+	db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+	db.Column("contest_id", db.Integer, db.ForeignKey("contest.id")),
+	db.Column("placement", db.Integer)
 	)
 
 class User(UserMixin, db.Model):
@@ -19,7 +31,9 @@ class User(UserMixin, db.Model):
 	password = db.Column(db.String(60), nullable=False)
 	contests_created = db.relationship('Contest', backref='creator')
 	created = db.relationship('Task', backref='author')
-	solved = db.relationship("Task", secondary=solved_by, backref=db.backref("solved_by_users", lazy="dynamic"))
+	solved = db.relationship('Task', secondary=solved_by, backref=db.backref("solved_by_users", lazy="dynamic"))
+	participated_in = db.relationship('Contest', secondary=participation, backref=db.backref("participants", lazy="dynamic"))
+	placements = db.relationship('Contest', secondary=placement, backref=db.backref("standings", lazy="dynamic"))
 
 	def __repr__(self):
 		return f"User('{self.username}', '{self.email}', '{self.image_file}'"

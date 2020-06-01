@@ -89,5 +89,8 @@ class ContestForm(FlaskForm):
 			raise ValidationError("Contest name already exists")
 
 
+class RegisterContestForm(FlaskForm):
+	accept = BooleanField('I accept the contest Rules!', validators=[DataRequired()])
+	submit = SubmitField('Register for Contest')
 
 

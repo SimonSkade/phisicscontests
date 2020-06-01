@@ -12,13 +12,11 @@
 				<th scope="col">Difficulty</th>
 			</tr>
 			{% for task in contest.tasks %}
-				{% if task.visible %}
-					<tr>
-						<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.id }}</a></td>
-						<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.title }}</a></td>
-						<td>{{ task.difficulty }}</td>
-					</tr>
-				{% endif %}
+				<tr>
+					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.id }}</a></td>
+					<td><a href="{{ url_for('exercises') }}/{{ task.id }}">{{ task.title }}</a></td>
+					<td>{{ task.difficulty }}</td>
+				</tr>
 			{% endfor %}
 		</table>
 	</div>

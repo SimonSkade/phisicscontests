@@ -3,12 +3,14 @@
 {% block body %}
 <div class="container mt-5 mb-5">
 	<div class="col-lg-10 center-form">
+		<h2 class="mb-4">Upcoming Contests</h2>
 		<table class="table">
 			<tr>
 				<th scope="col">Id</th>
 				<th scope="col">Name</th>
 				<th scope="col">Start</th>
 				<th scope="col">End</th>
+				<th scope="col">Register</th>
 			</tr>
 			{% for contest in contests %}
 				<tr>
@@ -16,12 +18,13 @@
 					<td>{{ contest.name }}</td>
 					<td>{{ contest.start }}</td>
 					<td>{{ contest.end }}</td>
+					<td><a href="{{ url_for('register_contest', contestID=contest.id) }}">Register</a></td>
 				</tr>
 			{% endfor %}
 		</table>
 	</div>
-	<div class="col-lg-10 center-form">
+	<!--<div class="col-lg-10 center-form">
 		<p>Make sure to reload the page when a contest starts!</p>
-	</div>
+	</div>-->
 </div>
 {% endblock %}

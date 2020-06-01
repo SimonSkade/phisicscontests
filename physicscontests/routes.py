@@ -2,12 +2,12 @@ import secrets
 import os
 from PIL import Image, ImageOps
 from flask import render_template, url_for, flash, redirect, request, make_response
-from physicscontests import app, db, bcrypt, login_manager#, scheduler
+from physicscontests import app, db, bcrypt, login_manager, scheduler
 from physicscontests.models import User, Task, Contest
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime
 from sqlalchemy import or_
-from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm
+from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm, RegisterContestForm
 from wtforms import SelectMultipleField
 from flask_wtf import FlaskForm
 
@@ -140,7 +140,7 @@ def view_task(taskID):
 		if current_user.is_authenticated and task in current_user.solved:
 			form.answer.data = task.solution
 		if form.validate_on_submit():
-			if form.answer.data == task.solution and current_user.is_authenticated:
+			if form.answer.data == task.solution and current_user.is_authenticated and task not in current_user.solved:
 				task.solved_by_users.append(current_user)
 				db.session.commit()
 			return render_template("view_task.html", task=task, form=form)
@@ -154,6 +154,35 @@ def view_task(taskID):
 
 @app.route("/contests/<int:contestID>")
 def view_contest(contestID):
+	contest = Contest.query.filter_by(id=contestID).first()
+	if contest.end < datetime.now() or current_user == contest.creator:
+		return render_template("view_contest.html", contest=contest)
+	elif not current_user.is_authenticated:
+		flash(f"Log in to participate in the contest!", "success")
+		return redirect(url_for("login"))
+	elif current_user not in contest.participants:
+		return redirect(url_for("register_contest", contestID=contestID))
+	elif contest.start > datetime.now():
+		flash("The contest has not started yet. You can access this page when the contest has started.")
+		return redirect(url_for("home"))
+	else:
+		return render_template("view_contest.html", contest=contest)
+
+@app.route("/contests/register/<int:contestID>", methods=["GET", "POST"])
+@login_required
+def register_contest(contestID):
+	contest = Contest.query.filter_by(id=contestID).first()
+	form = RegisterContestForm()
+	if form.validate_on_submit():
+		contest.participants.append(current_user)
+		db.session.commit()
+		return redirect(url_for("view_contest", contestID=contestID))
+	return render_template("register_contest.html", form=form, contest=contest)
+
+
+
+@app.route("/contests/scoreboard/<int:contestID>")
+def contest_scoreboard(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
 	if contest.start >= datetime.now() or current_user == contest.creator:
 		return render_template("view_contest.html", contest=contest)
@@ -190,8 +219,19 @@ def contribute():
 
 
 
-#def publish_contest(contestID):
-#	return
+def contest_start_notification(contestID):#does not work, as it requires a user request
+	contest = Contest.query.filter_by(id=contestID).first()
+	flash(f"Contest {contest.name} has started. You can now access the contest site, if you are registered.")
+
+
+def end_contest_process(contestID):
+	#publish contest tasks
+	contest = Contest.query.filter_by(id=contestID).first()
+	for task in contest.tasks:
+		task.visible = True
+		db.session.commit()
+
+	#calculate scoreboard
 
 
 @app.route("/create_contest", methods=["GET", "POST"])
@@ -207,8 +247,9 @@ def create_contest():
 			contest.tasks.append(Task.query.filter_by(id=taskID).first())
 		db.session.add(contest)
 		db.session.commit()
-		#scheduler.add_job(publish_contest, "date", run_date=contest.start, args=[contest.id])
-		flash("Contest created! You can now add exercises to your contest.")
+		#scheduler.add_job(contest_start_notification, "date", run_date=contest.start, args=[contest.id])
+		scheduler.add_job(end_contest_process, "date", run_date=contest.end, args=[contest.id])
+		flash("Contest created successfully!")
 		#should redirect to modify contest page
 	return render_template("create_contest.html", form=form)#, contests_running=Contest.query.filter(Contest.start <= datetime.now()).filter(Contest.end > datetime.now()).all())
 
