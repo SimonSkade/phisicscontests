@@ -3,7 +3,7 @@ from flask_wtf.file import FileAllowed, FileRequired
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, DateTimeField, SelectMultipleField, MultipleFileField, FileField, DecimalField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from physicscontests.models import User, Task
+from physicscontests.models import User, Task, Contest
 from sqlalchemy import or_
 from physicscontests import login_manager
 
@@ -82,9 +82,9 @@ class ContestForm(FlaskForm):
 		users_tasks = Task.query.filter_by(visible=True).all()
 	"""
 	users_tasks = Task.query.all()
-	tasks = SelectMultipleField("Add Tasks", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
+	tasks = SelectMultipleField("Add Tasks (please just add tasks you created by yourself)", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
 	submit = SubmitField("Create Contest")
-	def validate_title(self,name):
+	def validate_name(self,name):
 		if Contest.query.filter_by(name=name.data).first():
 			raise ValidationError("Contest name already exists")
 

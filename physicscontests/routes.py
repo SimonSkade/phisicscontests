@@ -3,9 +3,9 @@ import os
 from PIL import Image, ImageOps
 from flask import render_template, url_for, flash, redirect, request, make_response
 from physicscontests import app, db, bcrypt, login_manager, scheduler
-from physicscontests.models import User, Task, Contest
+from physicscontests.models import User, Task, Contest, Solved_by
 from flask_login import login_user, current_user, logout_user, login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import or_
 from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm, RegisterContestForm
 from wtforms import SelectMultipleField
@@ -137,11 +137,13 @@ def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
 	if task and (task.visible or task.author == current_user):
 		form = AnswerForm()
-		if current_user.is_authenticated and task in current_user.solved:
+		task_solved_by_user = Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all()
+		if current_user.is_authenticated and task_solved_by_user:
 			form.answer.data = task.solution
 		if form.validate_on_submit():
-			if form.answer.data == task.solution and current_user.is_authenticated and task not in current_user.solved:
-				task.solved_by_users.append(current_user)
+			if form.answer.data == task.solution and current_user.is_authenticated and not task_solved_by_user:
+				assoc = Solved_by(solved_by_users=current_user, solved=task)
+				task.solved_by_users.append(assoc)
 				db.session.commit()
 			return render_template("view_task.html", task=task, form=form)
 			#return redirect(url_for('exercises') + "/" + str(taskID))
@@ -174,8 +176,11 @@ def register_contest(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
 	form = RegisterContestForm()
 	if form.validate_on_submit():
-		contest.participants.append(current_user)
-		db.session.commit()
+		if current_user == contest.creator:
+			flash("You cannot participate in a contest you created!")
+		elif current_user not in contest.participants:
+			contest.participants.append(current_user)
+			db.session.commit()
 		return redirect(url_for("view_contest", contestID=contestID))
 	return render_template("register_contest.html", form=form, contest=contest)
 
@@ -184,10 +189,39 @@ def register_contest(contestID):
 @app.route("/contests/scoreboard/<int:contestID>")
 def contest_scoreboard(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
-	if contest.start >= datetime.now() or current_user == contest.creator:
-		return render_template("view_contest.html", contest=contest)
+	if datetime.now() > contest.end:
+		#calculate scoreboard
+		task_ids = [task.id for task in contest.tasks]
+		#participation = len(contest.participants)
+		scores = []
+		participants = User.query.filter(User.participated_in.any(Contest.id == contest.id)).all()
+		for participant in participants:
+			contest_tasks_solved = []
+			solved = Solved_by.query.filter_by(user=participant).all()
+			for i in range(solved):
+				task = solved[i].task
+				if task.id in task_ids:
+					contest_tasks_solved.append(task)
+			score = 0
+			latest_answer = timedelta(0)
+			for task in contest_tasks_solved:
+				score += task.difficulty
+				#correct_answer = solved_by.query.filter_by(user_id=participant.id, task_id=task.id).first()
+				#latest_answer = max(latest_answer, correct_answer.timestamp - contest.start)
+			scores.append((score, participant.username))
+		sort(scores, reverse=True)
+		rank = 1
+		scoreboard = []
+		for i, score_user in enumerate(scores):
+			real_rank = rank
+			if i != 0 and score_user[0] == scores[i-1][0]:
+				real_rank = ranks[i-1]
+			scoreboard.append((real_rank, score_user[1], score_user[0]))
+			rank += 1
+		return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard)
 	else:
-		return not_found(1)
+		flash("Contest is not over yet.")
+		return redirect(url_for("home"))
 
 
 @app.route("/practice/exercises")
@@ -231,7 +265,6 @@ def end_contest_process(contestID):
 		task.visible = True
 		db.session.commit()
 
-	#calculate scoreboard
 
 
 @app.route("/create_contest", methods=["GET", "POST"])

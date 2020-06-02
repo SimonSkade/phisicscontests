@@ -11,7 +11,7 @@
 					{{ form.name.label(class="form-control-label") }}
 					{% if form.name.errors %}
 						{{ form.name(class="form-control form-control-lg is-invalid") }}
-						<div class="emailinvalid-feedback">
+						<div class="invalid-feedback">
 							{% for error in form.name.errors %}
 								<span>{{ error }}</span>
 							{% endfor %}
@@ -37,7 +37,7 @@
 					{{ form.start.label(class="form-control-label") }}
 					{% if form.start.errors %}
 						{{ form.start(class="form-control form-control-lg is-invalid") }}
-						<div class="emailinvalid-feedback">
+						<div class="invalid-feedback">
 							{% for error in form.start.errors %}
 								<span>{{ error }}</span>
 							{% endfor %}

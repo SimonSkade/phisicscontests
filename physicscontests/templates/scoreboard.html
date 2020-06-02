@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+	<div class="col-lg-10 center-form">
+		<h2>{{ contest.name }} Scoreboard</h2>
+		<table class="table">
+			<tr>
+				<th scope="col">Rank</th>
+				<th scope="col">Name</th>
+				<th scope="col">Score</th>
+			</tr>
+			{% for row in scoreboard %}
+				<tr>
+					<td>{{ row[0] }}</td>
+					<td>{{ row[1] }}</td>
+					<td>{{ row[2] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+{% endblock %}

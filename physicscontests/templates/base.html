@@ -9,6 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Physicscontests</title>
 
+    <!-- favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='new_img/favicon1.png') }}">
+
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500,600,700,800,900&display=swap"
         rel="stylesheet">
@@ -87,7 +90,7 @@
             <header class="header-section bg-gradient">
                 <div class="container">
                     {% for contest in running_cs %}
-                        <div class="row center-form"><p>Join running contest: <a href="url_for('view_contest', contestID=contest.id)">{{ contest.name }}</a></p></div>
+                        <div class="row center-form"><p>Join running contest: <a href="{{ url_for('view_contest', contestID=contest.id) }}">{{ contest.name }}</a></p></div>
                     {% endfor %}                    
                 </div>
             </header>

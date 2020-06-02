@@ -6,11 +6,16 @@ from datetime import datetime
 def load_user(user_id):
 	return User.query.get(int(user_id))
 
-solved_by = db.Table("solved_by",
-	db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
-	db.Column("task_id", db.Integer, db.ForeignKey("task.id")),
-	db.Column('timestamp', db.TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
-	)
+#needs to be changed to class model to use the timestamp
+class Solved_by(db.Model):
+	#id = db.Column(db.Integer, primary_key=True)
+	__table_args__ = (db.PrimaryKeyConstraint("user_id","task_id"),)
+	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
+	task_id = db.Column(db.Integer, db.ForeignKey("task.id"), primary_key=True)
+	timestamp = db.Column(db.TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
+	solved_by_users = db.relationship("User", back_populates="solved")
+	solved = db.relationship("Task", back_populates="solved_by_users")
+
 
 participation = db.Table("participation",
 	db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
@@ -31,12 +36,12 @@ class User(UserMixin, db.Model):
 	password = db.Column(db.String(60), nullable=False)
 	contests_created = db.relationship('Contest', backref='creator')
 	created = db.relationship('Task', backref='author')
-	solved = db.relationship('Task', secondary=solved_by, backref=db.backref("solved_by_users", lazy="dynamic"))
+	solved = db.relationship('Solved_by', back_populates="solved_by_users")
 	participated_in = db.relationship('Contest', secondary=participation, backref=db.backref("participants", lazy="dynamic"))
 	placements = db.relationship('Contest', secondary=placement, backref=db.backref("standings", lazy="dynamic"))
 
 	def __repr__(self):
-		return f"User('{self.username}', '{self.email}', '{self.image_file}'"
+		return f"User('{self.username}', '{self.email}', '{self.image_file})'"
 
 
 class Task(db.Model):
@@ -52,6 +57,7 @@ class Task(db.Model):
 	difficulty = db.Column(db.Integer, nullable=False)
 	author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	contest_id = db.Column(db.Integer, db.ForeignKey('contest.id'))
+	solved_by_users = db.relationship("Solved_by", back_populates="solved")
 
 	def __repr__(self):
 		return f"Task('{self.title}', ID: '{self.id}')"
@@ -66,7 +72,15 @@ class Contest(db.Model):
 	tasks = db.relationship('Task', backref='contest')
 	creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-
+"""
+class Scoreboard(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	contest_id = db.Column(db.Integer, db.ForeignKey("contest.id"))
+	contest = relationship("Contest", uselist=False, backref=db.backref("scoreboard", uselist=False))
+	rank = db.Column(db.Integer, nullable=False)
+	username = db.Column(db.Integer, nullable=False)
+	score = db.Column(db.Integer, nullable=False)
+"""
 
 
 
