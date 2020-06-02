@@ -8,11 +8,13 @@
 			<tr>
 				<th scope="col">Id</th>
 				<th scope="col">Name</th>
+				<th scope="col">Scoreboard</th>
 			</tr>
 			{% for contest in contests %}
 				<tr>
 					<td><a href="/contests/{{ contest.id }}">{{ contest.id }}</a></td>
 					<td><a href="/contests/{{ contest.id }}">{{ contest.name }}</a></td>
+					<td><a href="{{ url_for('contest_scoreboard', contestID=contest.id) }}">Scoreboard</a></td>
 				</tr>
 			{% endfor %}
 		</table>

@@ -197,9 +197,9 @@ def contest_scoreboard(contestID):
 		participants = User.query.filter(User.participated_in.any(Contest.id == contest.id)).all()
 		for participant in participants:
 			contest_tasks_solved = []
-			solved = Solved_by.query.filter_by(user=participant).all()
-			for i in range(solved):
-				task = solved[i].task
+			solves = Solved_by.query.filter_by(solved_by_users=participant).all()
+			for i in range(len(solves)):
+				task = solves[i].solved
 				if task.id in task_ids:
 					contest_tasks_solved.append(task)
 			score = 0
@@ -209,13 +209,13 @@ def contest_scoreboard(contestID):
 				#correct_answer = solved_by.query.filter_by(user_id=participant.id, task_id=task.id).first()
 				#latest_answer = max(latest_answer, correct_answer.timestamp - contest.start)
 			scores.append((score, participant.username))
-		sort(scores, reverse=True)
+		scores.sort(reverse=True)
 		rank = 1
 		scoreboard = []
 		for i, score_user in enumerate(scores):
 			real_rank = rank
 			if i != 0 and score_user[0] == scores[i-1][0]:
-				real_rank = ranks[i-1]
+				real_rank = scoreboard[i-1][0]
 			scoreboard.append((real_rank, score_user[1], score_user[0]))
 			rank += 1
 		return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard)
