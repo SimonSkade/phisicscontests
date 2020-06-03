@@ -142,7 +142,7 @@ def view_task(taskID):
 			form.answer.data = task.solution
 		if form.validate_on_submit():
 			if form.answer.data == task.solution and current_user.is_authenticated and not task_solved_by_user:
-				assoc = Solved_by(solved_by_users=current_user, solved=task)
+				assoc = Solved_by(solved_by_users=current_user, solved=task, timestamp=datetime.now())
 				task.solved_by_users.append(assoc)
 				db.session.commit()
 			return render_template("view_task.html", task=task, form=form)
@@ -200,23 +200,19 @@ def contest_scoreboard(contestID):
 			solves = Solved_by.query.filter_by(solved_by_users=participant).all()
 			for i in range(len(solves)):
 				task = solves[i].solved
-				if task.id in task_ids:
-					contest_tasks_solved.append(task)
+				if task.id in task_ids and solves[i].timestamp < contest.end:
+					contest_tasks_solved.append((task,solves[i].timestamp))
 			score = 0
 			latest_answer = timedelta(0)
-			for task in contest_tasks_solved:
+			for task,time in contest_tasks_solved:
 				score += task.difficulty
-				#correct_answer = solved_by.query.filter_by(user_id=participant.id, task_id=task.id).first()
-				#latest_answer = max(latest_answer, correct_answer.timestamp - contest.start)
-			scores.append((score, participant.username))
-		scores.sort(reverse=True)
+				latest_answer = max(latest_answer, time - contest.start)
+			scores.append((score, latest_answer, participant.username))
+		scores.sort(key=lambda k: (-k[0], k[1]))
 		rank = 1
 		scoreboard = []
 		for i, score_user in enumerate(scores):
-			real_rank = rank
-			if i != 0 and score_user[0] == scores[i-1][0]:
-				real_rank = scoreboard[i-1][0]
-			scoreboard.append((real_rank, score_user[1], score_user[0]))
+			scoreboard.append((rank, score_user[2], score_user[0], score_user[1]))
 			rank += 1
 		return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard)
 	else:

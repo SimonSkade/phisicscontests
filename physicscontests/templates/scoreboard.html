@@ -9,12 +9,14 @@
 				<th scope="col">Rank</th>
 				<th scope="col">Name</th>
 				<th scope="col">Score</th>
+				<th scope="col">Time Penalty</th>
 			</tr>
 			{% for row in scoreboard %}
 				<tr>
 					<td>{{ row[0] }}</td>
 					<td>{{ row[1] }}</td>
 					<td>{{ row[2] }}</td>
+					<td>{{ row[3] }}</td>
 				</tr>
 			{% endfor %}
 		</table>
