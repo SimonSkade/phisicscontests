@@ -4,10 +4,11 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
+import os
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "bb31594820cb0ee8d7e0dc07bd156619"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")#"sqlite:///site.db"#use the sqlite database for local version
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)

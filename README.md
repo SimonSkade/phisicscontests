@@ -8,7 +8,7 @@ This is the source code of a website that hosts physics contests. It is kind of 
 
 ## Try running it yourself
 
-(I think it just works on Linux ;D )
+(It may not work if you are not using Linux)
 
 Use pipenv to run the application.
 
