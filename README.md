@@ -2,15 +2,48 @@
 
 This is the source code of a website that hosts physics contests. It is kind of like coding competitions, but with physics problems.
 
-## How to run
+## Website
 
-I will create a requirements.txt file and restructure the repository soon.
+[Insert URL here]
 
-You can try to run it already from the command line, but you may need some additional libraries.
+## Try running it yourself
+
+(I think it just works on Linux ;D )
+
+Use pipenv to run the application.
+
+Clone repo:
 
 ```
-python manup_template/app.py
+git clone https://github.com/SimonSkade/physicscontests.git
 ```
+
+or 
+
+```
+git clone git@github.com:SimonSkade/physicscontests.git
+```
+
+No go into the project directory and install and setup pipenv:
+
+```
+cd physicscontests/ #go to project directory
+pip install pipenv #install pipenv
+pipenv shell #go into the virtual environment pipenv
+pipenv install --ignore-pipfile #install necessary python-packages with the right version in your pipenv
+```
+
+The `--ignore-pipfile` is important so you have the same package versions.
+
+Then inside your pipenv, you can run
+
+```
+python run.py
+```
+
+to deploy the website on your local machine.
+
+In your browser, you can now open the link, outputted from the command (most often localhost:5000).
 
 ## License
 
