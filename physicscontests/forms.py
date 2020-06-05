@@ -59,6 +59,7 @@ class TaskForm(FlaskForm):
 	writeup = TextAreaField("Writeup / Explanation of solution")
 	writeup2 = FileField("Writeup / Explanation of solution", validators=[FileAllowed(["jpg","png","pdf","docx","odt","odp","pptx","txt","md"])])
 	difficulty = SelectField("Difficulty", choices=[(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9),(10,10)], coerce=int)
+	visible = BooleanField("Make Task directly visible for users (You are not allowed to use the task in a contest if you choose this option)")
 	submit = SubmitField("Create Task")
 	def validate_title(self,title):
 		if Task.query.filter_by(title=title.data).first():

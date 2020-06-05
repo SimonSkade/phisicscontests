@@ -124,7 +124,7 @@ def create_task():
 		writeup_file = None
 		if form.writeup2.data:
 			writeup_file = save_writeup_file(form.writeup2.data)
-		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=writeup_file, difficulty=form.difficulty.data, author=current_user)
+		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=writeup_file, difficulty=form.difficulty.data, visible=form.visible.data, author=current_user)
 		db.session.add(task)
 		db.session.commit()
 		flash("Thanks for creating this task! This task is not visible for other users at the moment, but you can put it into one of your contests.", "success")
@@ -279,7 +279,6 @@ def create_contest():
 		#scheduler.add_job(contest_start_notification, "date", run_date=contest.start, args=[contest.id])
 		scheduler.add_job(end_contest_process, "date", run_date=contest.end, args=[contest.id])
 		flash("Contest created successfully!")
-		#should redirect to modify contest page
 	return render_template("create_contest.html", form=form)#, contests_running=Contest.query.filter(Contest.start <= datetime.now()).filter(Contest.end > datetime.now()).all())
 
 
