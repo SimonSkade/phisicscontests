@@ -9,3 +9,6 @@ Pillow
 SQLAlchemy
 WTForms
 Jinja2
+datetime
+apscheduler
+email_validator
