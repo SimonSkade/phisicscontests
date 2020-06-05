@@ -12,3 +12,4 @@ Jinja2
 datetime
 apscheduler
 email_validator
+gunicorn

@@ -20,6 +20,7 @@ Jinja2 = "*"
 DateTime = "*"
 APScheduler = "*"
 email-validator = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
