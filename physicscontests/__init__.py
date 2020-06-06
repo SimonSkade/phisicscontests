@@ -10,7 +10,6 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")#"sqlite:///site.db"#use the sqlite database for local version
 db = SQLAlchemy(app)
-#print(db, " db")
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
