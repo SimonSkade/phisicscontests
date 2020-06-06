@@ -82,5 +82,6 @@ class Scoreboard(db.Model):
 	score = db.Column(db.Integer, nullable=False)
 """
 
-
+db.create_all()
+db.session.commit()
 
