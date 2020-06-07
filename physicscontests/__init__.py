@@ -7,8 +7,16 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import os
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")#"sqlite:///site.db"#use the sqlite database for local version
+
+if os.environ.get("ENV") == production:
+	app.config["DEBUG"] = False
+	app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+	app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+else:
+	app.config["DEBUG"] = True
+	app.config["SECRET_KEY"] = "2vt8q98bfwbfb28vgfzu25cfjsghfgv4t"
+	app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
