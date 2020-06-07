@@ -4,7 +4,7 @@ This is the source code of a website that hosts physics contests. It is kind of 
 
 ## Website
 
-[Insert URL here]
+https://physicscontests.herokuapp.com/create-task
 
 ## Try running it yourself
 

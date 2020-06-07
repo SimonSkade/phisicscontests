@@ -82,8 +82,8 @@ class ContestForm(FlaskForm):
 	else:
 		users_tasks = Task.query.filter_by(visible=True).all()
 	"""
-	#users_tasks = Task.query.all()
-	#tasks = SelectMultipleField("Add Tasks (please just add tasks you created by yourself)", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
+	users_tasks = Task.query.all()
+	tasks = SelectMultipleField("Add Tasks (please just add tasks you created by yourself)", choices=[(task.id,task.title) for task in users_tasks], coerce=int)
 	submit = SubmitField("Create Contest")
 	def validate_name(self,name):
 		if Contest.query.filter_by(name=name.data).first():
