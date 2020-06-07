@@ -2,4 +2,4 @@
 
 from physicscontests import app
 
-app.run()
+app.run(port=3000)
