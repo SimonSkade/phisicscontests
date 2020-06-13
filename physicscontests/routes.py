@@ -81,8 +81,9 @@ def save_explanation_picture(form_picture):
 	
 	i = Image.open(form_picture)
 	orig_width, orig_height = i.size
-	output_size = (int(min(orig_width,500)/orig_width * orig_width),int(min(orig_height,450)/orig_height *orig_height))
-	i = ImageOps.fit(i,output_size, Image.ANTIALIAS)
+	shrink_factor = min(min(orig_width,500)/orig_width, min(orig_height,450)/orig_height)
+	output_size = (int(orig_width*shrink_factor),int(orig_height*shrink_factor))
+	i = i.thumbnail(output_size, Image.ANTIALIAS)
 	i.save(picture_path)
 	return picture_fn
 
