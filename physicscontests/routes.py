@@ -32,8 +32,10 @@ def register():
 		user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 		db.session.add(user)
 		db.session.commit()
-		flash(f"Account created for {form.username.data}!", "success")
-		return redirect(url_for("login"))
+		flash(f"Account created for {form.username.data}! You were logged in!", "success")
+		login_user(user)
+		next_page = request.args.get("next")
+		return redirect(next_page) if next_page else redirect(url_for("home"))
 	return render_template("register.html", form=form)
 
 
@@ -137,15 +139,17 @@ def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
 	if task and (task.visible or task.author == current_user):
 		form = AnswerForm()
-		task_solved_by_user = Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all()
-		if current_user.is_authenticated and task_solved_by_user:
+		if current_user.is_authenticated and Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 			form.answer.data = task.solution
 		if form.validate_on_submit():
-			if form.answer.data == task.solution and current_user.is_authenticated and not task_solved_by_user:
+			if round(form.answer.data/task.solution,2) and current_user.is_authenticated and not task_solved_by_user:
 				assoc = Solved_by(solved_by_users=current_user, solved=task, timestamp=datetime.now())
 				task.solved_by_users.append(assoc)
 				db.session.commit()
-			return render_template("view_task.html", task=task, form=form)
+			image_file = None
+			if task.image_file:
+				image_file = url_for("static",filename="explanation_images/" + task.image_file)
+			return render_template("view_task.html", task=task, form=form, image_file=image_file)
 			#return redirect(url_for('exercises') + "/" + str(taskID))
 		image_file = None
 		if task.image_file:

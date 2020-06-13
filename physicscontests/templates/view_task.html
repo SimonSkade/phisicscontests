@@ -21,7 +21,7 @@
 						<span>{{ error }}</span>
 					{% endfor %}
 				</div>
-			{% elif form.answer.data and (form.answer.data/task.solution)|round(3) == 1 %}
+			{% elif form.answer.data and (form.answer.data/task.solution)|round(2) == 1 %}
 				{{ form.answer(class="form-control form-control-lg") }}
 				<div>
 					<span style="color:green">Correct</span>
