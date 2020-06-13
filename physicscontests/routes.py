@@ -143,7 +143,7 @@ def view_task(taskID):
 		if current_user.is_authenticated and Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 			form.answer.data = task.solution
 		if form.validate_on_submit():
-			if round(form.answer.data/task.solution,2) and current_user.is_authenticated and not task_solved_by_user:
+			if round(form.answer.data/task.solution,2) and current_user.is_authenticated and not Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 				assoc = Solved_by(solved_by_users=current_user, solved=task, timestamp=datetime.now())
 				task.solved_by_users.append(assoc)
 				db.session.commit()
