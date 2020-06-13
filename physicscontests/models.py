@@ -81,11 +81,3 @@ class Scoreboard(db.Model):
 	username = db.Column(db.Integer, nullable=False)
 	score = db.Column(db.Integer, nullable=False)
 """
-
-
-##########DANGER ZONE##########################
-db.drop_all()
-db.create_all()
-
-## if you uncomment the above the complete database will be deleted and recreated
-###############################################

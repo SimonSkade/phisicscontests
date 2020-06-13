@@ -42,3 +42,5 @@ app.jinja_env.globals.update(get_running_contests=get_running_contests)
 app.jinja_env.globals.update(get_finished_contests=get_finished_contests)
 
 from physicscontests.commands import create_tables
+
+create_tables()
