@@ -81,5 +81,3 @@ class Scoreboard(db.Model):
 	username = db.Column(db.Integer, nullable=False)
 	score = db.Column(db.Integer, nullable=False)
 """
-db.drop_all()
-db.create_all()
