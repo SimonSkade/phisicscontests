@@ -81,7 +81,7 @@ def save_explanation_picture(form_picture):
 	
 	i = Image.open(form_picture)
 	orig_width, orig_height = i.size
-	output_size = (min(orig_width,350),min(orig_height,300))
+	output_size = (int(min(orig_width,500)/orig_width * orig_width),int(min(orig_height,450)/orig_height *orig_height))
 	i = ImageOps.fit(i,output_size, Image.ANTIALIAS)
 	i.save(picture_path)
 	return picture_fn
@@ -129,7 +129,7 @@ def create_task():
 		task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=writeup_file, difficulty=form.difficulty.data, visible=form.visible.data, author=current_user)
 		db.session.add(task)
 		db.session.commit()
-		flash("Thanks for creating this task! This task is not visible for other users at the moment, but you can put it into one of your contests.", "success")
+		flash("Task was created successfully!", "success")
 		return redirect(url_for("home"))
 	return render_template("create_task.html", form=form)
 
@@ -284,6 +284,7 @@ def create_contest():
 		scheduler.add_job(end_contest_process, "date", run_date=contest.end, args=[contest.id])
 		flash("Contest created successfully!")
 	return render_template("create_contest.html", form=form)#, contests_running=Contest.query.filter(Contest.start <= datetime.now()).filter(Contest.end > datetime.now()).all())
+
 
 
 

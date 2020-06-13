@@ -26,6 +26,11 @@
 				<div>
 					<span style="color:green">Correct</span>
 				</div>
+			{% elif form.answer.data and form.answer.data == 42 %}
+				{{ form.answer(class="form-control form-control-lg") }}
+				<div>
+					<span style="color:orange">Nice try, but this won't be judged as correct!</span>
+				</div>
 			{% elif form.answer.data %}
 				{{ form.answer(class="form-control form-control-lg") }}
 				<div>
