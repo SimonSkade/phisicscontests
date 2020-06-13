@@ -84,8 +84,8 @@ class Scoreboard(db.Model):
 
 
 ##########DANGER ZONE##########################
-##db.drop_all()
-##db.create_all()
+db.drop_all()
+db.create_all()
 
 ## if you uncomment the above the complete database will be deleted and recreated
 ###############################################
