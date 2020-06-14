@@ -143,10 +143,10 @@ def modify_task(taskID):
 		return not_found(404)
 	form = ModifyTaskForm()
 	form.title.data = task.title
-	#form.story.data = task.story
+	form.story.data = task.story
 	#form.image.data = task.image_file
-	#form.task.data = task.task
-	#form.solution.data = task.solution
+	form.task.data = task.task
+	form.solution.data = task.solution
 	form.writeup.data = task.writeup
 	#form.writeup2.data = task.writeup2
 	form.difficulty.data = task.difficulty
@@ -244,10 +244,12 @@ def contest_scoreboard(contestID):#inefficient, must be changed if there are man
 	task_ids = [task.id for task in contest.tasks]
 	#participation = len(contest.participants)
 	scores = []
+	all_solves = []
 	participants = User.query.filter(User.participated_in.any(Contest.id == contest.id)).all()
 	for participant in participants:
 		contest_tasks_solved = []
 		solves = Solved_by.query.filter_by(solved_by_users=participant).all()
+		all_solves.append(solves)
 		for i in range(len(solves)):
 			task = solves[i].solved
 			if task.id in task_ids and solves[i].timestamp < contest.end:
@@ -264,7 +266,7 @@ def contest_scoreboard(contestID):#inefficient, must be changed if there are man
 	for i, score_user in enumerate(scores):
 		scoreboard.append((rank, score_user[2], score_user[0], score_user[1]))
 		rank += 1
-	return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard)
+	return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard, all_solves=all_solves)
 	#else:
 	#	flash("Contest is not over yet.")
 	#	return redirect(url_for("home"))
