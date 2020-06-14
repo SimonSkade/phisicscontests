@@ -239,35 +239,35 @@ def register_contest(contestID):
 @app.route("/contests/scoreboard/<int:contestID>")
 def contest_scoreboard(contestID):#inefficient, must be changed if there are many participants in one contest
 	contest = Contest.query.filter_by(id=contestID).first()
-	if datetime.now() > contest.end:
-		#calculate scoreboard
-		task_ids = [task.id for task in contest.tasks]
-		#participation = len(contest.participants)
-		scores = []
-		participants = User.query.filter(User.participated_in.any(Contest.id == contest.id)).all()
-		for participant in participants:
-			contest_tasks_solved = []
-			solves = Solved_by.query.filter_by(solved_by_users=participant).all()
-			for i in range(len(solves)):
-				task = solves[i].solved
-				if task.id in task_ids and solves[i].timestamp < contest.end:
-					contest_tasks_solved.append((task,solves[i].timestamp))
-			score = 0
-			latest_answer = timedelta(0)
-			for task,time in contest_tasks_solved:
-				score += task.difficulty
-				latest_answer = max(latest_answer, time - contest.start)
-			scores.append((score, latest_answer, participant.username))
-		scores.sort(key=lambda k: (-k[0], k[1]))
-		rank = 1
-		scoreboard = []
-		for i, score_user in enumerate(scores):
-			scoreboard.append((rank, score_user[2], score_user[0], score_user[1]))
-			rank += 1
-		return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard)
-	else:
-		flash("Contest is not over yet.")
-		return redirect(url_for("home"))
+	#if datetime.now() > contest.end:
+	#calculate scoreboard
+	task_ids = [task.id for task in contest.tasks]
+	#participation = len(contest.participants)
+	scores = []
+	participants = User.query.filter(User.participated_in.any(Contest.id == contest.id)).all()
+	for participant in participants:
+		contest_tasks_solved = []
+		solves = Solved_by.query.filter_by(solved_by_users=participant).all()
+		for i in range(len(solves)):
+			task = solves[i].solved
+			if task.id in task_ids and solves[i].timestamp < contest.end:
+				contest_tasks_solved.append((task,solves[i].timestamp))
+		score = 0
+		latest_answer = timedelta(0)
+		for task,time in contest_tasks_solved:
+			score += task.difficulty
+			latest_answer = max(latest_answer, time - contest.start)
+		scores.append((score, latest_answer, participant.username))
+	scores.sort(key=lambda k: (-k[0], k[1]))
+	rank = 1
+	scoreboard = []
+	for i, score_user in enumerate(scores):
+		scoreboard.append((rank, score_user[2], score_user[0], score_user[1]))
+		rank += 1
+	return render_template("scoreboard.html", contest=contest, scoreboard=scoreboard)
+	#else:
+	#	flash("Contest is not over yet.")
+	#	return redirect(url_for("home"))
 
 
 @app.route("/practice/exercises")
@@ -276,6 +276,7 @@ def exercises():
 		tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
 	else:
 		tasks = Task.query.filter_by(visible=True).all()
+	tasks = Task.query.all()#temporary
 	return render_template("exercises.html", tasks=tasks)
 
 @app.route("/practice")
