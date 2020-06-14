@@ -94,20 +94,18 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    <header class="header-section bg-gradient">
+    <!--<header class="header-section bg-gradient">
         <div class="container">
                 <div class="row center-form"><p>Join running contest: <a href="{{ url_for('view_contest', contestID=1) }}">Hier gehts zum Contest</a></p></div>
         </div>
-    </header>
-    <!--
+    </header>-->
     <header class="header-section bg-gradient">
         <div class="container">
-                <div class="row center-form"><p>Contest 1 is over -  <a href="{{ url_for('contest_scoreboard', contestID=1) }}">See results</a></p></div>
+                <div class="row center-form"><p>Contest #1 is over -  <a href="{{ url_for('contest_scoreboard', contestID=1) }}">See results</a></p></div>
         </div>
     </header>
 
-    -->
-    {% with running_cs = get_running_contests() %}
+    <!--{% with running_cs = get_running_contests() %}
         {% if running_cs %}
             <header class="header-section bg-gradient">
                 <div class="container">
@@ -129,7 +127,7 @@
                 </div>
             </header>
         {% endif %}
-    {% endwith %}
+    {% endwith %}-->
 
     {% block body %}{% endblock %}
 

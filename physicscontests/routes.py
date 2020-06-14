@@ -252,8 +252,8 @@ def contest_scoreboard(contestID):#inefficient, must be changed if there are man
 		all_solves.append(solves)
 		for i in range(len(solves)):
 			task = solves[i].solved
-			if task.id in task_ids and solves[i].timestamp+timedelta(hours=1,minutes=49) < contest.end:
-				contest_tasks_solved.append((task,solves[i].timestamp+timedelta(hours=1,minutes=49)))
+			if task.id in task_ids and solves[i].timestamp+timedelta(hours=1,minutes=39) < contest.end:
+				contest_tasks_solved.append((task,solves[i].timestamp+timedelta(hours=1,minutes=39)))
 		score = 0
 		latest_answer = timedelta(0)
 		for task,time in contest_tasks_solved:
