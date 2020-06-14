@@ -16,6 +16,9 @@ class Solved_by(db.Model):
 	solved_by_users = db.relationship("User", back_populates="solved")
 	solved = db.relationship("Task", back_populates="solved_by_users")
 
+	def __repr__(self):
+		return f"<Solved_by('{self.user_id}', '{self.task_id}', '{self.timestamp})'>"
+
 
 participation = db.Table("participation",
 	db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
