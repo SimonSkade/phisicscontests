@@ -179,7 +179,7 @@ def modify_task(taskID):
 @app.route("/practice/exercises/<int:taskID>", methods=["GET","POST"])
 def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
-	if task and (task.visible or task.author == current_user):
+	if task:
 		form = AnswerForm()
 		if current_user.is_authenticated and Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 			form.answer.data = task.solution
