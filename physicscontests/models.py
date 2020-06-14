@@ -1,6 +1,6 @@
 from physicscontests import db, login_manager
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime,timedelta
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -12,7 +12,7 @@ class Solved_by(db.Model):
 	__table_args__ = (db.PrimaryKeyConstraint("user_id","task_id"),)
 	user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
 	task_id = db.Column(db.Integer, db.ForeignKey("task.id"), primary_key=True)
-	timestamp = db.Column(db.TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
+	timestamp = db.Column(db.TIMESTAMP(timezone=False), nullable=False, default=datetime.now())#later change to 2 hours offset
 	solved_by_users = db.relationship("User", back_populates="solved")
 	solved = db.relationship("Task", back_populates="solved_by_users")
 
