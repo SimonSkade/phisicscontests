@@ -94,7 +94,13 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
+    <header class="header-section bg-gradient">
+                <div class="container">
+                    {% for contest in running_cs %}
+                        <div class="row center-form"><p>Join running contest: <a href="{{ url_for('view_contest', contestID=1) }}">Hier gehts zum Contest</a></p></div>
+                    {% endfor %}                    
+                </div>
+            </header>
     {% with running_cs = get_running_contests() %}
         {% if running_cs %}
             <header class="header-section bg-gradient">
