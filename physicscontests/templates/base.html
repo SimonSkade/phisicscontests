@@ -85,12 +85,34 @@
         {% endif %}
     {% endwith %}
 
+    {% with announcements = get_important_announcements() %}
+        {% if announcements %}
+            {% for message in announcements %}
+                <script type="text/javascript">
+                    alert('{{ message }}');
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     {% with running_cs = get_running_contests() %}
         {% if running_cs %}
             <header class="header-section bg-gradient">
                 <div class="container">
                     {% for contest in running_cs %}
                         <div class="row center-form"><p>Join running contest: <a href="{{ url_for('view_contest', contestID=contest.id) }}">{{ contest.name }}</a></p></div>
+                    {% endfor %}                    
+                </div>
+            </header>
+        {% endif %}
+    {% endwith %}
+
+    {% with finished_cs = get_finished_contests() %}
+        {% if finished_cs %}
+            <header class="header-section bg-gradient">
+                <div class="container">
+                    {% for contest in finished_cs %}
+                        <div class="row center-form"><p>View results of finished contest: <a href="{{ url_for('contest_scoreboard', contestID=contest.id) }}">{{ contest.name }}</a></p></div>
                     {% endfor %}                    
                 </div>
             </header>

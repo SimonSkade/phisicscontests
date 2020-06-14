@@ -7,7 +7,7 @@ from physicscontests.models import User, Task, Contest, Solved_by
 from flask_login import login_user, current_user, logout_user, login_required
 from datetime import datetime, timedelta
 from sqlalchemy import or_
-from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm, RegisterContestForm
+from physicscontests.forms import RegistrationForm, LoginForm, UpdateAccountForm, TaskForm, AnswerForm, ContestForm, RegisterContestForm, ModifyTaskForm
 from wtforms import SelectMultipleField
 from flask_wtf import FlaskForm
 
@@ -135,6 +135,47 @@ def create_task():
 	return render_template("create_task.html", form=form)
 
 
+@app.route("/modify-task/<int:taskID>", methods=["GET","POST"])
+@login_required
+def modify_task(taskID):
+	task = Task.query.filter_by(id=taskID).first()
+	if current_user != task.author:
+		return not_found(404)
+	form = ModifyTaskForm()
+	form.title.data = task.title
+	form.story.data = task.story
+	#form.image.data = task.image_file
+	form.task.data = task.task
+	form.solution.data = task.solution
+	form.writeup.data = task.writeup
+	#form.writeup2.data = task.writeup2
+	form.difficulty.data = task.difficulty
+	form.visible.data = task.visible
+	#form.modifying.data = True
+	if form.validate_on_submit():
+		image_file = None
+		if form.image.data:
+			image_file = save_explanation_picture(form.image.data)
+		writeup_file = None
+		if form.writeup2.data:
+			writeup_file = save_writeup_file(form.writeup2.data)
+		#task = Task(title=form.title.data, story=form.story.data, image_file=image_file, task=form.task.data, solution=form.solution.data, writeup=form.writeup.data, writeup2=writeup_file, difficulty=form.difficulty.data, visible=form.visible.data, author=current_user)
+		task.title = form.title.data
+		task.story = form.story.data
+		task.image_file = image_file
+		task.task = form.task.data
+		task.solution = form.solution.data
+		task.writeup = form.writeup.data
+		task.writeup2 = writeup_file
+		task.difficulty = form.difficulty.data
+		task.visible = form.visible.data
+		db.session.commit()
+		flash("Task was updated successfully!", "success")
+		return redirect(url_for("home"))
+	return render_template("modify_task.html", form=form)
+
+
+
 @app.route("/practice/exercises/<int:taskID>", methods=["GET","POST"])
 def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
@@ -143,19 +184,19 @@ def view_task(taskID):
 		if current_user.is_authenticated and Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 			form.answer.data = task.solution
 		if form.validate_on_submit():
-			if round(form.answer.data/task.solution,2) and current_user.is_authenticated and not Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
+			if abs(form.answer.data-task.solution)/abs(task.solution) <= 0.01 and current_user.is_authenticated and not Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 				assoc = Solved_by(solved_by_users=current_user, solved=task, timestamp=datetime.now())
 				task.solved_by_users.append(assoc)
 				db.session.commit()
 			image_file = None
 			if task.image_file:
 				image_file = url_for("static",filename="explanation_images/" + task.image_file)
-			return render_template("view_task.html", task=task, form=form, image_file=image_file)
+			return render_template("view_task.html", task=task, form=form, image_file=image_file, is_author=(current_user==task.author))
 			#return redirect(url_for('exercises') + "/" + str(taskID))
 		image_file = None
 		if task.image_file:
 			image_file = url_for("static",filename="explanation_images/" + task.image_file)
-		return render_template("view_task.html", task=task, form=form, image_file=image_file)
+		return render_template("view_task.html", task=task, form=form, image_file=image_file, is_author=(current_user==task.author))
 	else:
 		return not_found(1)
 
@@ -186,13 +227,16 @@ def register_contest(contestID):
 		elif current_user not in contest.participants:
 			contest.participants.append(current_user)
 			db.session.commit()
-		return redirect(url_for("view_contest", contestID=contestID))
+		if contest.start <= datetime.now():
+			return redirect(url_for("view_contest", contestID=contestID))
+		else:
+			return redirect(url_for("home"))
 	return render_template("register_contest.html", form=form, contest=contest)
 
 
 
 @app.route("/contests/scoreboard/<int:contestID>")
-def contest_scoreboard(contestID):
+def contest_scoreboard(contestID):#inefficient, must be changed if there are many participants in one contest
 	contest = Contest.query.filter_by(id=contestID).first()
 	if datetime.now() > contest.end:
 		#calculate scoreboard
@@ -245,7 +289,7 @@ def past_contests():
 @app.route("/upcoming_contests")
 def upcoming_contests():
 	contests = Contest.query.filter(Contest.end > datetime.now()).order_by(Contest.start).all()
-	return render_template("upcoming_contests.html", contests=contests)
+	return render_template("upcoming_contests.html", contests=contests, current_user=current_user)
 
 
 @app.route("/contribute")
@@ -256,7 +300,10 @@ def contribute():
 
 def contest_start_notification(contestID):#does not work, as it requires a user request
 	contest = Contest.query.filter_by(id=contestID).first()
-	flash(f"Contest {contest.name} has started. You can now access the contest site, if you are registered.")
+	for task in contest.tasks:
+		task.visible = True
+		db.session.commit()
+	#flash(f"Contest {contest.name} has started. You can now access the contest site, if you are registered.")
 
 
 def end_contest_process(contestID):
@@ -265,6 +312,7 @@ def end_contest_process(contestID):
 	for task in contest.tasks:
 		task.visible = True
 		db.session.commit()
+	
 
 
 

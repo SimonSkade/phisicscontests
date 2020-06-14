@@ -21,7 +21,7 @@
 						<span>{{ error }}</span>
 					{% endfor %}
 				</div>
-			{% elif form.answer.data and (form.answer.data/task.solution)|round(2) == 1 %}
+			{% elif form.answer.data and (form.answer.data-task.solution)|abs / task.solution|abs <= 0.01 %}
 				{{ form.answer(class="form-control form-control-lg") }}
 				<div>
 					<span style="color:green">Correct</span>
@@ -29,7 +29,7 @@
 			{% elif form.answer.data and form.answer.data == 42 %}
 				{{ form.answer(class="form-control form-control-lg") }}
 				<div>
-					<span style="color:orange">Nice try, but this won't be judged as correct!</span>
+					<span style="color:orange">Funny, but this won't be judged as correct!</span>
 				</div>
 			{% elif form.answer.data %}
 				{{ form.answer(class="form-control form-control-lg") }}
@@ -48,6 +48,11 @@
 					Problem created by {{ task.author.username }}
 				</p>
 			</div>
+			{% if is_author %}
+				<div>
+					<a href="{{ url_for('modify_task', taskID=task.id) }}">Modify Task</a>
+				</div>
+			{% endif %}
 		</form>
 	</div>
 </div>

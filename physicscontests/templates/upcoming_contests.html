@@ -18,7 +18,11 @@
 					<td>{{ contest.name }}</td>
 					<td>{{ contest.start }}</td>
 					<td>{{ contest.end }}</td>
-					<td><a href="{{ url_for('register_contest', contestID=contest.id) }}">Register</a></td>
+					{% if current_user.is_authenticated and current_user in contest.participants %}
+						<td style="color:green">Registered</td>
+					{% else %}
+						<td><a href="{{ url_for('register_contest', contestID=contest.id) }}">Register</a></td>
+					{% endif %}
 				</tr>
 			{% endfor %}
 		</table>
