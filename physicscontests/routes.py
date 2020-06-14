@@ -143,10 +143,10 @@ def modify_task(taskID):
 		return not_found(404)
 	form = ModifyTaskForm()
 	form.title.data = task.title
-	form.story.data = task.story
+	#form.story.data = task.story
 	#form.image.data = task.image_file
-	form.task.data = task.task
-	form.solution.data = task.solution
+	#form.task.data = task.task
+	#form.solution.data = task.solution
 	form.writeup.data = task.writeup
 	#form.writeup2.data = task.writeup2
 	form.difficulty.data = task.difficulty
