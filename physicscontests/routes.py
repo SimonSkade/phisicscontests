@@ -203,6 +203,7 @@ def view_task(taskID):
 @app.route("/contests/<int:contestID>")
 def view_contest(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
+	return render_template("view_contest.html", contest=contest)
 	if contest.end < datetime.now() or current_user == contest.creator:
 		return render_template("view_contest.html", contest=contest)
 	elif not current_user.is_authenticated:
