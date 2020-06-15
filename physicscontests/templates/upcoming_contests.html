@@ -14,8 +14,8 @@
 			</tr>
 			{% for contest in contests %}
 				<tr>
-					<td><a href="url_for('view_contest', contestID=contest.id) }}">{{ contest.id }}</a></td>
-					<td><a href="url_for('view_contest', contestID=contest.id) }}">{{ contest.name }}</a></td>
+					<td><a href="{{ url_for('view_contest', contestID=contest.id) }}">{{ contest.id }}</a></td>
+					<td><a href="{{ url_for('view_contest', contestID=contest.id) }}">{{ contest.name }}</a></td>
 					<td>{{ contest.start }}</td>
 					<td>{{ contest.end }}</td>
 					{% if current_user.is_authenticated and current_user in contest.participants %}

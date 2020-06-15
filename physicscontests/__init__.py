@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
+from pytz import utc
 
 app = Flask(__name__)
 
@@ -22,7 +23,7 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
-scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler(timezone=utc)
 scheduler.start()
 
 
@@ -36,11 +37,11 @@ def get_important_announcements():#should only be triggered once if there is som
 	return announcements
 
 def get_running_contests():
-	contests_running = Contest.query.filter(Contest.start <= datetime.now()).filter(Contest.end > datetime.now()).all()
+	contests_running = Contest.query.filter(Contest.start <= datetime.utcnow()).filter(Contest.end > datetime.utcnow()).all()
 	return contests_running
 
 def get_finished_contests():
-	contests_finished = Contest.query.filter(Contest.end <= datetime.now()).filter(Contest.end > datetime.now() - timedelta(hours=2)).all()
+	contests_finished = Contest.query.filter(Contest.end <= datetime.utcnow()).filter(Contest.end > datetime.utcnow() - timedelta(hours=1)).all()
 	return contests_finished
 
 app.jinja_env.globals.update(get_running_contests=get_running_contests)

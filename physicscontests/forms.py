@@ -98,8 +98,8 @@ class AnswerForm(FlaskForm):
 class ContestForm(FlaskForm):
 	name = StringField("Contest name", validators=[DataRequired()])
 	description = TextAreaField("Contest description")
-	start = DateTimeField("Start (format: yyyy-mm-dd HH:MM:SS)", validators=[DataRequired()])
-	end = DateTimeField("End (format: yyyy-mm-dd HH:MM:SS)", validators=[DataRequired()])
+	start = DateTimeField("Start (in UTC time!) (format: yyyy-mm-dd HH:MM:SS)", validators=[DataRequired()])
+	end = DateTimeField("End (in UTC time!) (format: yyyy-mm-dd HH:MM:SS)", validators=[DataRequired()])
 	"""if current_user:
 		users_tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
 	else:

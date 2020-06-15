@@ -14,7 +14,7 @@ from flask_wtf import FlaskForm
 @app.route("/")
 @app.route("/home")
 def home():
-	contest = Contest.query.filter(Contest.end > datetime.now()).order_by(Contest.start).first()
+	contest = Contest.query.filter(Contest.end > datetime.utcnow()).order_by(Contest.start).first()
 	return render_template("index.html", contest=contest)
  
 
@@ -137,7 +137,7 @@ def create_task():
 
 @app.route("/modify-task/<int:taskID>", methods=["GET","POST"])
 @login_required
-def modify_task(taskID):
+def modify_task(taskID):#modifiying does not work well yet (it only changes the stuff that is not set to the current value)
 	task = Task.query.filter_by(id=taskID).first()
 	if current_user != task.author:
 		return not_found(404)
@@ -179,13 +179,13 @@ def modify_task(taskID):
 @app.route("/practice/exercises/<int:taskID>", methods=["GET","POST"])
 def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
-	if task:
+	if task and (task.visible or current_user == task.author):
 		form = AnswerForm()
 		if current_user.is_authenticated and Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 			form.answer.data = task.solution
 		if form.validate_on_submit():
 			if abs(form.answer.data-task.solution)/abs(task.solution) <= 0.01 and current_user.is_authenticated and not Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
-				assoc = Solved_by(solved_by_users=current_user, solved=task, timestamp=datetime.now())
+				assoc = Solved_by(solved_by_users=current_user, solved=task, timestamp=datetime.utcnow())
 				task.solved_by_users.append(assoc)
 				db.session.commit()
 			image_file = None
@@ -203,15 +203,14 @@ def view_task(taskID):
 @app.route("/contests/<int:contestID>")
 def view_contest(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
-	return render_template("view_contest.html", contest=contest)
-	if contest.end < datetime.now() or current_user == contest.creator:
+	if contest.end < datetime.utcnow() or current_user == contest.creator:
 		return render_template("view_contest.html", contest=contest)
 	elif not current_user.is_authenticated:
 		flash(f"Log in to participate in the contest!", "success")
 		return redirect(url_for("login"))
 	elif current_user not in contest.participants:
 		return redirect(url_for("register_contest", contestID=contestID))
-	elif contest.start > datetime.now():
+	elif contest.start > datetime.utcnow():
 		flash("The contest has not started yet. You can access this page when the contest has started.")
 		return redirect(url_for("home"))
 	else:
@@ -228,7 +227,7 @@ def register_contest(contestID):
 		elif current_user not in contest.participants:
 			contest.participants.append(current_user)
 			db.session.commit()
-		if contest.start <= datetime.now():
+		if contest.start <= datetime.utcnow():
 			return redirect(url_for("view_contest", contestID=contestID))
 		else:
 			return redirect(url_for("home"))
@@ -239,7 +238,7 @@ def register_contest(contestID):
 @app.route("/contests/scoreboard/<int:contestID>")
 def contest_scoreboard(contestID):#inefficient, must be changed if there are many participants in one contest
 	contest = Contest.query.filter_by(id=contestID).first()
-	#if datetime.now() > contest.end:
+	#if datetime.utcnow() > contest.end:
 	#calculate scoreboard
 	task_ids = [task.id for task in contest.tasks]
 	#participation = len(contest.participants)
@@ -252,8 +251,8 @@ def contest_scoreboard(contestID):#inefficient, must be changed if there are man
 		all_solves.append(solves)
 		for i in range(len(solves)):
 			task = solves[i].solved
-			if task.id in task_ids and solves[i].timestamp+timedelta(hours=1,minutes=39) < contest.end:
-				contest_tasks_solved.append((task,solves[i].timestamp+timedelta(hours=1,minutes=39)))
+			if task.id in task_ids and solves[i].timestamp < contest.end:
+				contest_tasks_solved.append((task,solves[i].timestamp))
 		score = 0
 		latest_answer = timedelta(0)
 		for task,time in contest_tasks_solved:
@@ -287,12 +286,12 @@ def practice():
 
 @app.route("/past_contests")
 def past_contests():
-	contests = Contest.query.filter(Contest.end <= datetime.now()).all()
+	contests = Contest.query.filter(Contest.end <= datetime.utcnow()).all()
 	return render_template("past_contests.html", contests=contests)
 
 @app.route("/upcoming_contests")
 def upcoming_contests():
-	contests = Contest.query.filter(Contest.end > datetime.now()).order_by(Contest.start).all()
+	contests = Contest.query.filter(Contest.end > datetime.utcnow()).order_by(Contest.start).all()
 	return render_template("upcoming_contests.html", contests=contests, current_user=current_user)
 
 
@@ -302,7 +301,7 @@ def contribute():
 
 
 
-def contest_start_notification(contestID):#does not work, as it requires a user request
+def contest_start_process(contestID):#test online on heroku!!!
 	contest = Contest.query.filter_by(id=contestID).first()
 	for task in contest.tasks:
 		task.visible = True
@@ -334,9 +333,9 @@ def create_contest():
 		db.session.add(contest)
 		db.session.commit()
 		#scheduler.add_job(contest_start_notification, "date", run_date=contest.start, args=[contest.id])
-		scheduler.add_job(end_contest_process, "date", run_date=contest.end, args=[contest.id])
+		scheduler.add_job(contest_start_process, "date", run_date=contest.start, args=[contest.id])
 		flash("Contest created successfully!")
-	return render_template("create_contest.html", form=form)#, contests_running=Contest.query.filter(Contest.start <= datetime.now()).filter(Contest.end > datetime.now()).all())
+	return render_template("create_contest.html", form=form)
 
 
 
