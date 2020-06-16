@@ -28,7 +28,7 @@ scheduler.start()
 
 
 from physicscontests import routes
-from physicscontests.models import Contest
+from physicscontests.models import Contest, Task
 
 def get_important_announcements():#should only be triggered once if there is something important
 	announcements = []
@@ -37,6 +37,10 @@ def get_important_announcements():#should only be triggered once if there is som
 	return announcements
 
 def get_running_contests():
+	tasks = Task.query.all()
+	for task in tasks:
+		task.visible = True
+		db.session.commit()
 	contests_running = Contest.query.filter(Contest.start <= datetime.utcnow()).filter(Contest.end > datetime.utcnow()).all()
 	return contests_running
 
