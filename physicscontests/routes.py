@@ -277,7 +277,6 @@ def exercises():
 		tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
 	else:
 		tasks = Task.query.filter_by(visible=True).all()
-	tasks = Task.query.all()#temporary
 	return render_template("exercises.html", tasks=tasks)
 
 @app.route("/practice")
