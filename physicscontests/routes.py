@@ -143,7 +143,7 @@ def modify_task(taskID):#modifiying does not work well yet (it only changes the 
 		return not_found(404)
 	form = ModifyTaskForm()
 	form.title.data = task.title
-	form.story.data = task.story
+	#form.story.data = task.story
 	#form.image.data = task.image_file
 	form.task.data = task.task
 	form.solution.data = task.solution
