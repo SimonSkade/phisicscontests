@@ -37,10 +37,6 @@ def get_important_announcements():#should only be triggered once if there is som
 	return announcements
 
 def get_running_contests():
-	tasks = Task.query.filter_by(id=9).all()
-	for task in tasks:
-		task.visible = False
-		db.session.commit()
 	contests_running = Contest.query.filter(Contest.start <= datetime.utcnow()).filter(Contest.end > datetime.utcnow()).all()
 	return contests_running
 
