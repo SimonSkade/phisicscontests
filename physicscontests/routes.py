@@ -274,9 +274,9 @@ def contest_scoreboard(contestID):#inefficient, must be changed if there are man
 @app.route("/practice/exercises")
 def exercises():
 	if current_user.is_authenticated:
-		tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).all()
+		tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).order_by(Task.difficulty).all()
 	else:
-		tasks = Task.query.filter_by(visible=True).all()
+		tasks = Task.query.filter_by(visible=True).order_by(Task.difficulty).all()
 	return render_template("exercises.html", tasks=tasks)
 
 @app.route("/practice")
