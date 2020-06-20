@@ -113,9 +113,19 @@
     
 
     // Use this for real timer date
-    var timerdate = document.getElementById("contest-start").innerHTML;
+    var utctime = document.getElementById("contest-start").innerHTML;
+    //console.log(utctime)
+    var d = new Date(utctime+"Z")
+    var n = new Date(d.getTimezoneOffset()*60000)
+    var dt = new Date(d - n);
+    var localtime = dt.toISOString()
+    //console.log(localtime)
+    var firsthalf = localtime.slice(0,10)
+    var secondhalf = localtime.slice(11,19)
+    var final = firsthalf + " " + secondhalf
+    //console.log(final)
 
-	$("#countdown").countdown(timerdate, function(event) {
+	$("#countdown").countdown(final, function(event) {
         $(this).html(event.strftime("<div class='cd-item'><span>%D</span> <p>Days</p> </div>" + "<div class='cd-item'><span>%H</span> <p>Hrs</p> </div>" + "<div class='cd-item'><span>%M</span> <p>Mins</p> </div>" + "<div class='cd-item'><span>%S</span> <p>Secs</p> </div>"));
     });
 

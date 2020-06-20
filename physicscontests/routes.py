@@ -171,7 +171,7 @@ def modify_task(taskID):#modifiying does not work well yet (it only changes the 
 		task.visible = form.visible.data
 		db.session.commit()
 		flash("Task was updated successfully!", "success")
-		return redirect(url_for("home"))
+		return redirect(url_for("view_task", taskID=taskID))
 	return render_template("modify_task.html", form=form)
 
 
