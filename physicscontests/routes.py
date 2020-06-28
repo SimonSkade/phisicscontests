@@ -139,7 +139,9 @@ def create_task():
 @login_required
 def modify_task(taskID):#modifiying does not work well yet (it only changes the stuff that is not set to the current value)
 	task = Task.query.filter_by(id=taskID).first()
-	if current_user != task.author:
+	admin = User.query.filter_by(id=1).first()
+	has_rights = (current_user == task.author or current_user == admin)
+	if not has_rights:
 		return not_found(404)
 	form = ModifyTaskForm()
 	form.title.data = task.title
@@ -174,12 +176,29 @@ def modify_task(taskID):#modifiying does not work well yet (it only changes the 
 		return redirect(url_for("view_task", taskID=taskID))
 	return render_template("modify_task.html", form=form)
 
+@app.route("/delete-task/<int:taskID>", methods=["POST"])
+@login_required
+def delete_task(taskID):#modifiying does not work well yet (it only changes the stuff that is not set to the current value)
+	task = Task.query.get_or_404(taskID)
+	admin = User.query.filter_by(id=1).first()
+	has_rights = (current_user == task.author or current_user == admin)
+	if not has_rights:
+		return not_found(1)
+	for solve in Solved_by.query.filter_by(task_id=taskID).all():
+		db.session.delete(solve)
+	db.session.delete(task)
+	db.session.commit()
+	flash("The task has been deleted!", "success")
+	return redirect(url_for("home"))
+
 
 
 @app.route("/practice/exercises/<int:taskID>", methods=["GET","POST"])
 def view_task(taskID):
 	task = Task.query.filter_by(id=taskID).first()
-	if task and (task.visible or current_user == task.author):
+	admin = User.query.filter_by(id=1).first()
+	has_rights = (current_user == task.author or current_user == admin)
+	if task and (task.visible or has_rights):
 		form = AnswerForm()
 		if current_user.is_authenticated and Solved_by.query.filter_by(solved=task).filter_by(solved_by_users=current_user).all():
 			form.answer.data = task.solution
@@ -191,19 +210,21 @@ def view_task(taskID):
 			image_file = None
 			if task.image_file:
 				image_file = url_for("static",filename="explanation_images/" + task.image_file)
-			return render_template("view_task.html", task=task, form=form, image_file=image_file, is_author=(current_user==task.author))
+			return render_template("view_task.html", task=task, form=form, image_file=image_file, has_rights=has_rights)
 			#return redirect(url_for('exercises') + "/" + str(taskID))
 		image_file = None
 		if task.image_file:
 			image_file = url_for("static",filename="explanation_images/" + task.image_file)
-		return render_template("view_task.html", task=task, form=form, image_file=image_file, is_author=(current_user==task.author))
+		return render_template("view_task.html", task=task, form=form, image_file=image_file, has_rights=has_rights)
 	else:
 		return not_found(1)
 
 @app.route("/contests/<int:contestID>")
 def view_contest(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
-	if contest.end < datetime.utcnow() or current_user == contest.creator:
+	admin = User.query.filter_by(id=1).first()
+	has_rights = (current_user == contest.creator or current_user == admin)
+	if contest.end < datetime.utcnow() or has_rights:
 		return render_template("view_contest.html", contest=contest)
 	elif not current_user.is_authenticated:
 		flash(f"Log in to participate in the contest!", "success")
@@ -221,9 +242,11 @@ def view_contest(contestID):
 def register_contest(contestID):
 	contest = Contest.query.filter_by(id=contestID).first()
 	form = RegisterContestForm()
+	admin = User.query.filter_by(id=1).first()
+	has_rights = (current_user == contest.creator or current_user == admin)
 	if form.validate_on_submit():
-		if current_user == contest.creator:
-			flash("You cannot participate in a contest you created!")
+		if has_rights:
+			flash("You cannot participate in a contest in which you contributed!")
 		elif current_user not in contest.participants:
 			contest.participants.append(current_user)
 			db.session.commit()
@@ -273,8 +296,12 @@ def contest_scoreboard(contestID):#inefficient, must be changed if there are man
 
 @app.route("/practice/exercises")
 def exercises():
+	admin = User.query.filter_by(id=1).first()
 	if current_user.is_authenticated:
-		tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).order_by(Task.difficulty).all()
+		if current_user == admin:
+			tasks = Task.query.order_by(Task.difficulty).all()
+		else:
+			tasks = Task.query.filter(or_(Task.visible == True, Task.author == current_user)).order_by(Task.difficulty).all()
 	else:
 		tasks = Task.query.filter_by(visible=True).order_by(Task.difficulty).all()
 	return render_template("exercises.html", tasks=tasks)

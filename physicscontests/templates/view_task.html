@@ -48,16 +48,36 @@
 					Problem created by {{ task.author.username }}
 				</p>
 			</div>
-			{% if is_author %}
+			{% if has_rights %}
 				<div>
-					<a href="{{ url_for('modify_task', taskID=task.id) }}">Modify Task</a>
+					<div class="btn btn-warning btn-sm mt-1 mb-1"><a href="{{ url_for('modify_task', taskID=task.id) }}">Modify Task</a></div>
+					<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete Task</button>
 				</div>
 			{% endif %}
 		</form>
 	</div>
 	<div class="mt-4">
 		Unfortunately, the server refreshes the file system regularly, so the images in the tasks disappear regularly. I am trying to fix that.
-		If the images are not available right now, you can see them here: https://drive.google.com/drive/folders/1mbpUzNze_ts1BBuaP_7YWR3FtztyB9k7?usp=sharing
+		If the images are not available right now, you can see them here: <a href="https://drive.google.com/drive/folders/1mbpUzNze_ts1BBuaP_7YWR3FtztyB9k7?usp=sharing">https://drive.google.com/drive/folders/1mbpUzNze_ts1BBuaP_7YWR3FtztyB9k7?usp=sharing</a>
 	</div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="deleteModalLabel">Delete Task?</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <form action="{{ url_for('delete_task', taskID=task.id) }}" method="POST">
+        <input class="btn btn-danger" type="submit" value="Delete">
+      </form>
+    </div>
+  </div>
+</div>
 </div>
 {% endblock %}
